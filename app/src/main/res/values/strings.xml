@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Neighbourhood Crime</string>
+    <string name="title_activity_citizen_map">Map</string>
 </resources>
