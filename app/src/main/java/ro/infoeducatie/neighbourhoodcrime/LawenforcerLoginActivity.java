@@ -35,7 +35,7 @@ public class LawenforcerLoginActivity extends AppCompatActivity {
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 if(user!=null){
-                    Intent intent = new Intent(LawenforcerLoginActivity.this, MapActivity.class);
+                    Intent intent = new Intent(LawenforcerLoginActivity.this, LawenforcerMapActivity.class);
                     startActivity(intent);
                     finish();
                     return;
