@@ -42,7 +42,6 @@
             android:name=".CitizenMapActivity"
             android:label="@string/title_activity_citizen_map" />
         <activity android:name=".LawenforcerLoginActivity" />
-        <activity android:name=".MapActivity" />
         <activity android:name=".CitizenLoginActivity" />
         <activity android:name=".MainActivity">
         </activity>
