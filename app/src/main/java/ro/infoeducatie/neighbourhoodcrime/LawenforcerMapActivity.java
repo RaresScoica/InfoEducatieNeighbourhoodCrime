@@ -23,6 +23,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -77,7 +78,15 @@ public class LawenforcerMapActivity extends FragmentActivity implements OnMapRea
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists()) {
                         citizenId = dataSnapshot.getValue().toString();
-                        getAssignedCitizenPickupLocation();
+                        getAssignedCitizenRequestLocation();
+                } else {
+                    citizenId = "";
+                    if(requestMarker != null) {
+                        requestMarker.remove();
+                    }
+                    if(assignedCitizenRequestLocationReListener != null) {
+                        assignedCitizenRequestLocationRef.removeEventListener(assignedCitizenRequestLocationReListener);
+                    }
                 }
             }
 
@@ -88,12 +97,15 @@ public class LawenforcerMapActivity extends FragmentActivity implements OnMapRea
         });
     }
 
-    private void getAssignedCitizenPickupLocation() {
-        DatabaseReference assignedCitizenPickupLocationRef = FirebaseDatabase.getInstance().getReference().child("citizenRequest").child(citizenId).child("l");
-        assignedCitizenPickupLocationRef.addValueEventListener(new ValueEventListener() {
+    Marker requestMarker;
+    private DatabaseReference assignedCitizenRequestLocationRef;
+    private ValueEventListener assignedCitizenRequestLocationReListener;
+    private void getAssignedCitizenRequestLocation() {
+        assignedCitizenRequestLocationRef = FirebaseDatabase.getInstance().getReference().child("citizenRequest").child(citizenId).child("l");
+        assignedCitizenRequestLocationReListener = assignedCitizenRequestLocationRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.exists()) {
+                if(dataSnapshot.exists() && !citizenId.equals("")) {
                     List<Object> map = (List<Object>) dataSnapshot.getValue();
                     double locationLat = 0;
                     double locationLng = 0;
@@ -104,7 +116,7 @@ public class LawenforcerMapActivity extends FragmentActivity implements OnMapRea
                         locationLng = Double.parseDouble(map.get(1).toString());
                     }
                     LatLng lawenforcerLatLng = new LatLng(locationLat, locationLng);
-                    mMap.addMarker(new MarkerOptions().position(lawenforcerLatLng).title("requested location"));
+                    requestMarker = mMap.addMarker(new MarkerOptions().position(lawenforcerLatLng).title("requested location"));
                 }
             }
 

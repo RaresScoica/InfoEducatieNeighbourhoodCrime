@@ -49,7 +49,11 @@ public class CitizenMapActivity extends FragmentActivity implements OnMapReadyCa
 
     private Button mLogout, mRequest;
 
-    private LatLng pickupLocation;
+    private LatLng requestLocation;
+
+    private Boolean requestBol = false;
+
+    private Marker requestMarker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,18 +79,47 @@ public class CitizenMapActivity extends FragmentActivity implements OnMapReadyCa
         mRequest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                if(requestBol) {
+                    requestBol = false;
 
-                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("citizenRequest");
-                GeoFire geoFire = new GeoFire(ref);
-                geoFire.setLocation(userId, new GeoLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude()));
+                    geoQuery.removeAllListeners();
+                    lawenforcerLocationRef.removeEventListener(lawenforcerLocationRefListener);
 
-                pickupLocation = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
-                mMap.addMarker(new MarkerOptions().position(pickupLocation).title("Pickup Here"));
+                    if(lawenforcerFoundID != null) {
+                        DatabaseReference lawenforcerRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Lawenforcers").child(lawenforcerFoundID);
+                        lawenforcerRef.setValue(true);
+                        lawenforcerFoundID = null;
+                    }
+                    lawenforcerFound = false;
+                    radius = 1;
 
-                mRequest.setText("Searching for nearby troops...");
+                    String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-                getClosestLawenforcer();
+                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference("citizenRequest");
+                    GeoFire geoFire = new GeoFire(ref);
+                    geoFire.removeLocation(userId);
+
+                    if(requestMarker != null) {
+                        requestMarker.remove();
+                    }
+                    mRequest.setText("Call Authorities");
+
+                } else {
+                    requestBol = true;
+
+                    String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference("citizenRequest");
+                    GeoFire geoFire = new GeoFire(ref);
+                    geoFire.setLocation(userId, new GeoLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude()));
+
+                    requestLocation = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+                    requestMarker = mMap.addMarker(new MarkerOptions().position(requestLocation).title("Request Here"));
+
+                    mRequest.setText("Searching for nearby authorities...");
+
+                    getClosestLawenforcer();
+                }
             }
         });
     }
@@ -94,17 +127,19 @@ public class CitizenMapActivity extends FragmentActivity implements OnMapReadyCa
     private int radius = 1;
     private Boolean lawenforcerFound = false;
     private String lawenforcerFoundID;
+
+    GeoQuery geoQuery;
     private void getClosestLawenforcer() {
         final DatabaseReference lawenforcerLocation = FirebaseDatabase.getInstance().getReference().child("lawenforcersAvailable");
 
         GeoFire geoFire = new GeoFire(lawenforcerLocation);
-        GeoQuery geoQuery = geoFire.queryAtLocation(new GeoLocation(pickupLocation.latitude, pickupLocation.longitude), radius);
+        geoQuery = geoFire.queryAtLocation(new GeoLocation(requestLocation.latitude, requestLocation.longitude), radius);
         geoQuery.removeAllListeners();
 
         geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
             @Override
             public void onKeyEntered(String key, GeoLocation location) {
-                if(!lawenforcerFound) {
+                if(!lawenforcerFound && requestBol) {
                     lawenforcerFound = true;
                     lawenforcerFoundID = key;
 
@@ -144,12 +179,14 @@ public class CitizenMapActivity extends FragmentActivity implements OnMapReadyCa
     }
 
     private Marker mLawenforcerMarker;
+    private DatabaseReference lawenforcerLocationRef;
+    private ValueEventListener lawenforcerLocationRefListener;
     private void getLawenforcerLocation() {
-        DatabaseReference lawenforcerLocationRef = FirebaseDatabase.getInstance().getReference().child("lawenforcersWorking").child(lawenforcerFoundID).child("l");
-        lawenforcerLocationRef.addValueEventListener(new ValueEventListener() {
+        lawenforcerLocationRef = FirebaseDatabase.getInstance().getReference().child("lawenforcersWorking").child(lawenforcerFoundID).child("l");
+        lawenforcerLocationRefListener = lawenforcerLocationRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.exists()) {
+                if(dataSnapshot.exists() && requestBol) {
                     List<Object> map = (List<Object>) dataSnapshot.getValue();
                     double locationLat = 0;
                     double locationLng = 0;
@@ -165,8 +202,8 @@ public class CitizenMapActivity extends FragmentActivity implements OnMapReadyCa
                         mLawenforcerMarker.remove();
                     }
                     Location loc1 = new Location("");
-                    loc1.setLatitude(pickupLocation.latitude);
-                    loc1.setLongitude(pickupLocation.longitude);
+                    loc1.setLatitude(requestLocation.latitude);
+                    loc1.setLongitude(requestLocation.longitude);
 
                     Location loc2 = new Location("");
                     loc2.setLatitude(lawenforcerLatLng.latitude);
