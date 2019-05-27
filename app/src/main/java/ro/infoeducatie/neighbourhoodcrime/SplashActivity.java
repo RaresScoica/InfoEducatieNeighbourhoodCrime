@@ -18,7 +18,7 @@ public class SplashActivity extends AppCompatActivity {
             public void run() {
                 try {
                     super.run();
-                    sleep(2000);
+                    sleep(1500);
                     findViewById(R.id.loadingPanel).setVisibility(View.GONE);
                 } catch (Exception e) {
 
