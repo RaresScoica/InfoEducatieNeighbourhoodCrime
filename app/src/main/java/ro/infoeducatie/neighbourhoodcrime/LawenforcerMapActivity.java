@@ -1,5 +1,6 @@
 package ro.infoeducatie.neighbourhoodcrime;
 
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
@@ -8,6 +9,8 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 
 import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
@@ -32,6 +35,8 @@ public class LawenforcerMapActivity extends FragmentActivity implements OnMapRea
     Location mLastLocation;
     LocationRequest mLocationRequest;
 
+    private Button mLogout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,8 +45,19 @@ public class LawenforcerMapActivity extends FragmentActivity implements OnMapRea
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-    }
 
+        mLogout = (Button) findViewById(R.id.logout);
+        mLogout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FirebaseAuth.getInstance().signOut();
+                Intent intent = new Intent(LawenforcerMapActivity.this, MainActivity.class);
+                startActivity(intent);
+                finish();
+                return;
+            }
+        });
+    }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -73,8 +89,6 @@ public class LawenforcerMapActivity extends FragmentActivity implements OnMapRea
             mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
             mMap.animateCamera(CameraUpdateFactory.zoomTo(11));
 
-
-
             String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
             DatabaseReference ref = FirebaseDatabase.getInstance().getReference("lawenforcersAvailable");
 
@@ -103,7 +117,7 @@ public class LawenforcerMapActivity extends FragmentActivity implements OnMapRea
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
     }
-    
+
     @Override
     protected void onStop() {
         super.onStop();
