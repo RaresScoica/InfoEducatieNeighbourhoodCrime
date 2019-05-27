@@ -25,8 +25,14 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.List;
+import java.util.Map;
 
 public class LawenforcerMapActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
 
@@ -36,6 +42,8 @@ public class LawenforcerMapActivity extends FragmentActivity implements OnMapRea
     LocationRequest mLocationRequest;
 
     private Button mLogout;
+
+    private String citizenId = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +63,54 @@ public class LawenforcerMapActivity extends FragmentActivity implements OnMapRea
                 startActivity(intent);
                 finish();
                 return;
+            }
+        });
+
+        getAssignedCitizen();
+    }
+
+    private void getAssignedCitizen() {
+        String lawenforcerId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        DatabaseReference assignedCitizenRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Lawenforcers").child(lawenforcerId).child("citizenRequestId");
+        assignedCitizenRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()) {
+                        citizenId = dataSnapshot.getValue().toString();
+                        getAssignedCitizenPickupLocation();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void getAssignedCitizenPickupLocation() {
+        DatabaseReference assignedCitizenPickupLocationRef = FirebaseDatabase.getInstance().getReference().child("citizenRequest").child(citizenId).child("l");
+        assignedCitizenPickupLocationRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()) {
+                    List<Object> map = (List<Object>) dataSnapshot.getValue();
+                    double locationLat = 0;
+                    double locationLng = 0;
+                    if(map.get(0) != null) {
+                        locationLat = Double.parseDouble(map.get(0).toString());
+                    }
+                    if(map.get(1) != null) {
+                        locationLng = Double.parseDouble(map.get(1).toString());
+                    }
+                    LatLng lawenforcerLatLng = new LatLng(locationLat, locationLng);
+                    mMap.addMarker(new MarkerOptions().position(lawenforcerLatLng).title("requested location"));
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
             }
         });
     }
@@ -82,6 +138,7 @@ public class LawenforcerMapActivity extends FragmentActivity implements OnMapRea
     @Override
     public void onLocationChanged(Location location) {
         if(getApplicationContext()!=null){
+
             mLastLocation = location;
 
             LatLng latLng = new LatLng(location.getLatitude(),location.getLongitude());
@@ -90,10 +147,22 @@ public class LawenforcerMapActivity extends FragmentActivity implements OnMapRea
             mMap.animateCamera(CameraUpdateFactory.zoomTo(11));
 
             String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("lawenforcersAvailable");
+            DatabaseReference refAvailable = FirebaseDatabase.getInstance().getReference("lawenforcersAvailable");
+            DatabaseReference refWorking = FirebaseDatabase.getInstance().getReference("lawenforcersWorking");
+            GeoFire geoFireAvailable = new GeoFire(refAvailable);
+            GeoFire geoFireWorking = new GeoFire(refWorking);
 
-            GeoFire geoFire = new GeoFire(ref);
-            geoFire.setLocation(userId, new GeoLocation(location.getLatitude(), location.getLongitude()));
+            switch(citizenId) {
+                case "":
+                    geoFireWorking.removeLocation(userId);
+                    geoFireAvailable.setLocation(userId, new GeoLocation(location.getLatitude(), location.getLongitude()));
+                    break;
+
+                default:
+                    geoFireAvailable.removeLocation(userId);
+                    geoFireWorking.setLocation(userId, new GeoLocation(location.getLatitude(), location.getLongitude()));
+                    break;
+            }
         }
     }
 
