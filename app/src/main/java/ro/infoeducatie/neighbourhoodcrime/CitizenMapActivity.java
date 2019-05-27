@@ -27,11 +27,17 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.HashMap;
+import java.util.List;
 
 public class CitizenMapActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
 
@@ -100,6 +106,15 @@ public class CitizenMapActivity extends FragmentActivity implements OnMapReadyCa
                 if(!lawenforcerFound) {
                     lawenforcerFound = true;
                     lawenforcerFoundID = key;
+
+                    DatabaseReference lawenforcerRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Lawenforcers").child(lawenforcerFoundID);
+                    String citizenId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                    HashMap map = new HashMap();
+                    map.put("citizenRequestId", citizenId);
+                    lawenforcerRef.updateChildren(map);
+
+                    getLawenforcerLocation();
+                    mRequest.setText("Looking for Authority Location...");
                 }
             }
 
@@ -122,6 +137,38 @@ public class CitizenMapActivity extends FragmentActivity implements OnMapReadyCa
             }
             @Override
             public void onGeoQueryError(DatabaseError error) {
+
+            }
+        });
+    }
+
+    private Marker mLawenforcerMarker;
+    private void getLawenforcerLocation() {
+        DatabaseReference lawenforcerLocationRef = FirebaseDatabase.getInstance().getReference().child("lawenforcersWorking").child(lawenforcerFoundID).child("l");
+        lawenforcerLocationRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()) {
+                    List<Object> map = (List<Object>) dataSnapshot.getValue();
+                    double locationLat = 0;
+                    double locationLng = 0;
+                    mRequest.setText("Law enforcer Found");
+                    if(map.get(0) != null) {
+                        locationLat = Double.parseDouble(map.get(0).toString());
+                    }
+                    if(map.get(1) != null) {
+                        locationLng = Double.parseDouble(map.get(1).toString());
+                    }
+                    LatLng lawenforcerLatLng = new LatLng(locationLat, locationLng);
+                    if(mLawenforcerMarker != null) {
+                        mLawenforcerMarker.remove();
+                    }
+                    mLawenforcerMarker = mMap.addMarker(new MarkerOptions().position(lawenforcerLatLng).title("picked authority"));
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
         });
