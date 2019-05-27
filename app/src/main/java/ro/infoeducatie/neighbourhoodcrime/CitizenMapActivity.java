@@ -20,6 +20,7 @@ import com.firebase.geofire.GeoQueryEventListener;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -152,7 +153,7 @@ public class CitizenMapActivity extends FragmentActivity implements OnMapReadyCa
                     List<Object> map = (List<Object>) dataSnapshot.getValue();
                     double locationLat = 0;
                     double locationLng = 0;
-                    mRequest.setText("Law enforcer Found");
+                    mRequest.setText("Law enforcer found");
                     if(map.get(0) != null) {
                         locationLat = Double.parseDouble(map.get(0).toString());
                     }
@@ -163,6 +164,22 @@ public class CitizenMapActivity extends FragmentActivity implements OnMapReadyCa
                     if(mLawenforcerMarker != null) {
                         mLawenforcerMarker.remove();
                     }
+                    Location loc1 = new Location("");
+                    loc1.setLatitude(pickupLocation.latitude);
+                    loc1.setLongitude(pickupLocation.longitude);
+
+                    Location loc2 = new Location("");
+                    loc2.setLatitude(lawenforcerLatLng.latitude);
+                    loc2.setLongitude(lawenforcerLatLng.longitude);
+
+                    float distance = loc1.distanceTo(loc2);
+
+                    if(distance < 100) {
+                        mRequest.setText("Authority arrived at location");
+                    } else {
+                        mRequest.setText("Law enforcer found: " + String.valueOf(distance));
+                    }
+
                     mLawenforcerMarker = mMap.addMarker(new MarkerOptions().position(lawenforcerLatLng).title("picked authority"));
                 }
             }
