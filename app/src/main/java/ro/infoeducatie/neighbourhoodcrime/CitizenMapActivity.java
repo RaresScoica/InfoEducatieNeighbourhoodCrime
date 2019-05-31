@@ -53,6 +53,8 @@ public class CitizenMapActivity extends FragmentActivity implements OnMapReadyCa
 
     private Boolean requestBol = false;
 
+    private Marker requestMarker;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,13 +84,25 @@ public class CitizenMapActivity extends FragmentActivity implements OnMapReadyCa
                     geoQuery.removeAllListeners();
                     lawenforcerLocationRef.removeEventListener(lawenforcerLocationRefListener);
 
-                    
+                    if(lawenforcerFoundID != null) {
+                        DatabaseReference lawenforcerRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Lawenforcers").child(lawenforcerFoundID);
+                        lawenforcerRef.setValue(true);
+                        lawenforcerFoundID = null;
+                    }
+                    lawenforcerFound = false;
+                    radius=1;
 
                     String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
                     DatabaseReference ref = FirebaseDatabase.getInstance().getReference("citizenRequest");
                     GeoFire geoFire = new GeoFire(ref);
                     geoFire.removeLocation(userId);
+
+                    if(requestMarker != null) {
+                        requestMarker.remove();
+                    }
+                    mRequest.setText("Call Authorities");
+
                 } else {
                     requestBol = true;
                     String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -98,7 +112,7 @@ public class CitizenMapActivity extends FragmentActivity implements OnMapReadyCa
                     geoFire.setLocation(userId, new GeoLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude()));
 
                     requestLocation = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
-                    mMap.addMarker(new MarkerOptions().position(requestLocation).title("Pickup Here"));
+                    requestMarker = mMap.addMarker(new MarkerOptions().position(requestLocation).title("Issue Here"));
 
                     mRequest.setText("Searching for nearby troops...");
 
