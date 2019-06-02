@@ -13,6 +13,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -46,8 +48,11 @@ public class LawenforcerSettingsActivity extends AppCompatActivity {
 
     private String userID;
     private String mName, mPhone, mProfileImageUrl;
+    private String mService;
 
     private Uri resultUri;
+
+    private RadioGroup mRadioGroup;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +63,8 @@ public class LawenforcerSettingsActivity extends AppCompatActivity {
         mPhoneField = (EditText) findViewById(R.id.phone);
 
         mProfileImage = (ImageView) findViewById(R.id.profileImage);
+
+        mRadioGroup = (RadioGroup) findViewById(R.id.radioGroup);
 
         mBack = (Button) findViewById(R.id.back);
         mConfirm = (Button) findViewById(R.id.confirm);
@@ -113,6 +120,20 @@ public class LawenforcerSettingsActivity extends AppCompatActivity {
                         mPhone = map.get("id").toString();
                         mPhoneField.setText(mPhone);
                     }
+                    if(map.get("service") != null) {
+                        mService = map.get("service").toString();
+                        switch (mService) {
+                            case "Police":
+                                mRadioGroup.check(R.id.police);
+                                break;
+                            case "Firefighter":
+                                mRadioGroup.check(R.id.firefighter);
+                                break;
+                            case "Medic":
+                                mRadioGroup.check(R.id.medic);
+                                break;
+                        }
+                    }
                     if(map.get("profileImageUrl") != null) {
                         mProfileImageUrl = map.get("profileImageUrl").toString();
                         Glide.with(getApplication()).load(mProfileImageUrl).into(mProfileImage);
@@ -131,9 +152,21 @@ public class LawenforcerSettingsActivity extends AppCompatActivity {
         mName = mNameField.getText().toString();
         mPhone = mPhoneField.getText().toString();
 
+        int selectId = mRadioGroup.getCheckedRadioButtonId();
+
+        final RadioButton radioButton = (RadioButton) findViewById(selectId);
+
+        if(radioButton.getText() == null) {
+            return;
+        }
+
+        mService = radioButton.getText().toString();
+
+
         Map userInfo = new HashMap();
         userInfo.put("name", mName);
         userInfo.put("id", mPhone);
+        userInfo.put("service", mService);
         mLawenforcerDatabase.updateChildren(userInfo);
 
         if(resultUri != null) {

@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".CitizenSettingsActivity"
+    android:orientation="vertical"
     android:padding="20sp">
 
     <ImageView
@@ -13,9 +14,7 @@
         android:layout_height="100sp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:src="@mipmap/ic_launcher"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:src="@mipmap/ic_launcher" />
 
     <EditText
         android:id="@+id/name"
@@ -25,10 +24,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:background="@null"
-        android:hint="Name"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/profileImage" />
+        android:hint="Name" />
 
     <EditText
         android:id="@+id/phone"
@@ -39,23 +35,40 @@
         android:layout_marginEnd="8dp"
         android:background="@null"
         android:hint="ID"
-        android:inputType="number"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/name" />
+        android:inputType="number" />
+
+    <RadioGroup
+        android:id="@+id/radioGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal"
+        tools:layout_editor_absoluteX="24dp"
+        android:padding="5dp">
+        <RadioButton
+            android:id="@+id/police"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Police" />
+        <RadioButton
+            android:id="@+id/firefighter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Firefighter" />
+        <RadioButton
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Medic"
+            android:id="@+id/medic"/>
+    </RadioGroup>
 
     <Button
         android:id="@+id/confirm"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:text="confirm"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/phone" />
-
+        android:text="confirm" />
     <Button
         android:id="@+id/back"
         android:layout_width="match_parent"
@@ -63,9 +76,6 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:text="back"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/confirm" />
+        android:text="back" />
 
-</android.support.constraint.ConstraintLayout>
+</LinearLayout>

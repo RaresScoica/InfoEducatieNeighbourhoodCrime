@@ -22,10 +22,42 @@
         android:id="@+id/settings"
         android:layout_gravity="right"
         android:text="settings"/>
+
+    <LinearLayout
+        android:layout_gravity="bottom"
+        android:background="@android:color/white"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    <RadioGroup
+        android:id="@+id/radioGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal"
+        tools:layout_editor_absoluteX="24dp"
+        android:padding="5dp">
+        <RadioButton
+            android:id="@+id/police"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Police" />
+        <RadioButton
+            android:id="@+id/firefighter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Firefighter" />
+        <RadioButton
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Medic"
+            android:id="@+id/medic"/>
+    </RadioGroup>
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Call Authorities"
             android:id="@+id/request"
             android:layout_gravity="bottom" />
+    </LinearLayout>
 </FrameLayout>

@@ -14,6 +14,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -63,6 +65,10 @@ public class CitizenMapActivity extends FragmentActivity implements OnMapReadyCa
 
     private Marker requestMarker;
 
+    private RadioGroup mRadioGroup;
+
+    private String requestService;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,6 +84,9 @@ public class CitizenMapActivity extends FragmentActivity implements OnMapReadyCa
         }
 
         mSettings = (Button) findViewById(R.id.settings);
+
+        mRadioGroup = (RadioGroup) findViewById(R.id.radioGroup);
+        mRadioGroup.check(R.id.police);
 
         mLogout = (Button) findViewById(R.id.logout);
         mLogout.setOnClickListener(new View.OnClickListener() {
@@ -119,6 +128,15 @@ public class CitizenMapActivity extends FragmentActivity implements OnMapReadyCa
                     mRequest.setText("Call Authorities");
 
                 } else {
+                    int selectId = mRadioGroup.getCheckedRadioButtonId();
+
+                    final RadioButton radioButton = (RadioButton) findViewById(selectId);
+
+                    if(radioButton.getText() == null) {
+                        return;
+                    }
+                    requestService = radioButton.getText().toString();
+
                     requestBol = true;
                     String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
@@ -160,17 +178,36 @@ public class CitizenMapActivity extends FragmentActivity implements OnMapReadyCa
             @Override
             public void onKeyEntered(String key, GeoLocation location) {
                 if(!lawenforcerFound && requestBol) {
-                    lawenforcerFound = true;
-                    lawenforcerFoundID = key;
+                    DatabaseReference mCitizenDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child("Lawenforcers").child(key);
+                    mCitizenDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if(dataSnapshot.exists() && dataSnapshot.getChildrenCount() > 0) {
+                                Map<String, Object> lawenforcerMap = (Map<String, Object>) dataSnapshot.getValue();
+                                if(lawenforcerFound) {
+                                    return;
+                                }
+                                if(lawenforcerMap.get("service").equals(requestService)) {
+                                    lawenforcerFound = true;
+                                    lawenforcerFoundID = dataSnapshot.getKey();
 
-                    DatabaseReference lawenforcerRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Lawenforcers").child(lawenforcerFoundID);
-                    String citizenId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                    HashMap map = new HashMap();
-                    map.put("citizenRequest", citizenId);
-                    lawenforcerRef.updateChildren(map);
+                                    DatabaseReference lawenforcerRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Lawenforcers").child(lawenforcerFoundID);
+                                    String citizenId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                                    HashMap map = new HashMap();
+                                    map.put("citizenRequest", citizenId);
+                                    lawenforcerRef.updateChildren(map);
 
-                    getLawenforcerLocation();
-                    mRequest.setText("Looking for Authority Location...");
+                                    getLawenforcerLocation();
+                                    mRequest.setText("Looking for Authority Location...");
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
                 }
             }
 
