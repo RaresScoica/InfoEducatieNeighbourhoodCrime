@@ -1,15 +1,20 @@
 package ro.infoeducatie.neighbourhoodcrime;
 
 import android.Manifest;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
+import android.os.Build;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -18,11 +23,19 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.directions.route.AbstractRouting;
+import com.directions.route.Route;
+import com.directions.route.RouteException;
+import com.directions.route.Routing;
+import com.directions.route.RoutingListener;
 import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
+import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -31,6 +44,8 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -38,17 +53,18 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class LawenforcerMapActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
+public class LawenforcerMapActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener, RoutingListener {
 
     private GoogleMap mMap;
     GoogleApiClient mGoogleApiClient;
     Location mLastLocation;
     LocationRequest mLocationRequest;
 
-    private Button mLogout, mSettings;
+    private Button mLogout, mSettings, mStatus;
 
     private String citizenId = "";
 
@@ -67,6 +83,8 @@ public class LawenforcerMapActivity extends FragmentActivity implements OnMapRea
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lawenforcer_map);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+        polylines = new ArrayList<>();
+
         mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
 
@@ -75,6 +93,7 @@ public class LawenforcerMapActivity extends FragmentActivity implements OnMapRea
         } else {
             mapFragment.getMapAsync(this);
         }
+
 
         mCitizenInfo = (LinearLayout) findViewById(R.id.citizenInfo);
 
@@ -109,6 +128,14 @@ public class LawenforcerMapActivity extends FragmentActivity implements OnMapRea
             }
         });
 
+        mStatus = (Button) findViewById(R.id.status);
+        mStatus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                endRequest();
+            }
+        });
+
         getAssignedCitizen();
     }
 
@@ -123,17 +150,7 @@ public class LawenforcerMapActivity extends FragmentActivity implements OnMapRea
                         getAssignedCitizenPickupLocation();
                         getAssignedCitizenInfo();
                 } else {
-                    citizenId = "";
-                    if(requestMarker != null) {
-                        requestMarker.remove();
-                    }
-                    if(assignedCitizenPickupLocationRefListener != null) {
-                        assignedCitizenPickupLocationRef.removeEventListener(assignedCitizenPickupLocationRefListener);
-                    }
-                    mCitizenInfo.setVisibility(View.GONE);
-                    mCitizenName.setText("");
-                    mCitizenPhone.setText("");
-                    mCitizenProfileImage.setImageResource(R.mipmap.ic_launcher);
+                    endRequest();
                 }
             }
 
@@ -162,8 +179,9 @@ public class LawenforcerMapActivity extends FragmentActivity implements OnMapRea
                     if(map.get(1) != null) {
                         locationLng = Double.parseDouble(map.get(1).toString());
                     }
-                    LatLng lawenforcerLatLng = new LatLng(locationLat, locationLng);
-                    requestMarker = mMap.addMarker(new MarkerOptions().position(lawenforcerLatLng).title("requested location"));
+                    LatLng requestLatLng = new LatLng(locationLat, locationLng);
+                    requestMarker = mMap.addMarker(new MarkerOptions().position(requestLatLng).title("requested location"));
+                    getRouteToMarker(requestLatLng);
                 }
             }
 
@@ -172,6 +190,16 @@ public class LawenforcerMapActivity extends FragmentActivity implements OnMapRea
 
             }
         });
+    }
+
+    private void getRouteToMarker(LatLng requestLatLng) {
+        Routing routing = new Routing.Builder()
+                .travelMode(AbstractRouting.TravelMode.DRIVING)
+                .withListener(this)
+                .alternativeRoutes(false)
+                .waypoints(new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()), requestLatLng)
+                .build();
+        routing.execute();
     }
 
     private void getAssignedCitizenInfo() {
@@ -201,18 +229,43 @@ public class LawenforcerMapActivity extends FragmentActivity implements OnMapRea
         });
     }
 
+    private void endRequest() {
+        mStatus.setText("Finish Request");
+        erasePolyLines();
+
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        DatabaseReference lawenforcerRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Lawenforcers").child(userId).child("citizenRequest");
+        lawenforcerRef.removeValue();
+
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("citizenRequest");
+        GeoFire geoFire = new GeoFire(ref);
+        geoFire.removeLocation(citizenId);
+        citizenId="";
+
+        if(requestMarker != null) {
+            requestMarker.remove();
+        }
+        if(assignedCitizenPickupLocationRefListener != null) {
+            assignedCitizenPickupLocationRef.removeEventListener(assignedCitizenPickupLocationRefListener);
+        }
+        mCitizenInfo.setVisibility(View.GONE);
+        mCitizenName.setText("");
+        mCitizenPhone.setText("");
+        mCitizenProfileImage.setImageResource(R.mipmap.ic_launcher);
+    }
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
         buildGoogleApiClient();
         mMap.setMyLocationEnabled(true);
     }
 
-    protected synchronized void buildGoogleApiClient(){
+    protected synchronized  void buildGoogleApiClient() {
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
@@ -257,9 +310,9 @@ public class LawenforcerMapActivity extends FragmentActivity implements OnMapRea
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(1000);
         mLocationRequest.setFastestInterval(1000);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
 
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(LawenforcerMapActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_REQUEST_CODE);
         }
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
@@ -267,10 +320,12 @@ public class LawenforcerMapActivity extends FragmentActivity implements OnMapRea
 
     @Override
     public void onConnectionSuspended(int i) {
+
     }
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
     }
 
     private void disconnectLawenforcer() {
@@ -304,5 +359,59 @@ public class LawenforcerMapActivity extends FragmentActivity implements OnMapRea
         if(!isLoggingOut) {
             disconnectLawenforcer();
         }
+    }
+
+    private List<Polyline> polylines;
+    private static final int[] COLORS = new int[]{R.color.primary_dark_material_light};
+
+    @Override
+    public void onRoutingFailure(RouteException e) {
+        /*if(e != null) {
+            Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }else {
+            Toast.makeText(this, "Something went wrong, Try again", Toast.LENGTH_SHORT).show();
+        }*/
+    }
+
+    @Override
+    public void onRoutingStart() {
+
+    }
+
+    @Override
+    public void onRoutingSuccess(ArrayList<Route> route, int shortestRouteIndex) {
+        if(polylines.size()>0) {
+            for (Polyline poly : polylines) {
+                poly.remove();
+            }
+        }
+
+        polylines = new ArrayList<>();
+        //add route(s) to the map.
+        for (int i = 0; i <route.size(); i++) {
+
+            //In case of more than 5 alternative routes
+            int colorIndex = i % COLORS.length;
+
+            PolylineOptions polyOptions = new PolylineOptions();
+            polyOptions.color(getResources().getColor(COLORS[colorIndex]));
+            polyOptions.width(10 + i * 3);
+            polyOptions.addAll(route.get(i).getPoints());
+            Polyline polyline = mMap.addPolyline(polyOptions);
+            polylines.add(polyline);
+
+            Toast.makeText(getApplicationContext(),"Route "+ (i+1) +": distance - "+ route.get(i).getDistanceValue()+": duration - "+ route.get(i).getDurationValue(),Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onRoutingCancelled() {
+
+    }
+    private void erasePolyLines() {
+        for (Polyline line : polylines) {
+            line.remove();
+        }
+        polylines.clear();
     }
 }
