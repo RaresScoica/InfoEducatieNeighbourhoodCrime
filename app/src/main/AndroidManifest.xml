@@ -17,7 +17,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/NoBarTheme">
-        <activity android:name=".SplashActivity"
+        <activity android:name=".LawenforcerSettingsActivity"></activity>
+        <activity android:name=".CitizenSettingsActivity" />
+        <activity
+            android:name=".SplashActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -43,8 +46,7 @@
             android:label="@string/title_activity_citizen_map" />
         <activity android:name=".LawenforcerLoginActivity" />
         <activity android:name=".CitizenLoginActivity" />
-        <activity android:name=".MainActivity">
-        </activity>
+        <activity android:name=".MainActivity" />
     </application>
 
 </manifest>

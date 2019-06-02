@@ -1,5 +1,6 @@
 package ro.infoeducatie.neighbourhoodcrime;
 
+import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -11,7 +12,12 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
 import com.google.android.gms.common.ConnectionResult;
@@ -42,23 +48,59 @@ public class LawenforcerMapActivity extends FragmentActivity implements OnMapRea
     Location mLastLocation;
     LocationRequest mLocationRequest;
 
-    private Button mLogout;
+    private Button mLogout, mSettings;
 
     private String citizenId = "";
+
+    private Boolean isLoggingOut = false;
+
+    private SupportMapFragment mapFragment;
+
+    private LinearLayout mCitizenInfo;
+
+    private ImageView mCitizenProfileImage;
+
+    private TextView mCitizenName, mCitizenPhone;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lawenforcer_map);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+        mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
+
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(LawenforcerMapActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_REQUEST_CODE);
+        } else {
+            mapFragment.getMapAsync(this);
+        }
+
+        mCitizenInfo = (LinearLayout) findViewById(R.id.citizenInfo);
+
+        mCitizenProfileImage = (ImageView) findViewById(R.id.citizenProfileImage);
+
+        mCitizenName = (TextView) findViewById(R.id.citizenName);
+        mCitizenPhone = (TextView) findViewById(R.id.citizenPhone);
+
+        mSettings = (Button) findViewById(R.id.settings);
+        mSettings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(LawenforcerMapActivity.this, LawenforcerSettingsActivity.class);
+                startActivity(intent);
+                finish();
+                return;
+            }
+        });
 
         mLogout = (Button) findViewById(R.id.logout);
         mLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                isLoggingOut = true;
+                disconnectLawenforcer();
+
                 FirebaseAuth.getInstance().signOut();
                 Intent intent = new Intent(LawenforcerMapActivity.this, MainActivity.class);
                 startActivity(intent);
@@ -72,13 +114,14 @@ public class LawenforcerMapActivity extends FragmentActivity implements OnMapRea
 
     private void getAssignedCitizen() {
         String lawenforcerId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        DatabaseReference assignedCitizenRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Lawenforcers").child(lawenforcerId).child("citizenRequestId");
+        DatabaseReference assignedCitizenRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Lawenforcers").child(lawenforcerId).child("citizenRequest");
         assignedCitizenRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists()) {
                         citizenId = dataSnapshot.getValue().toString();
                         getAssignedCitizenPickupLocation();
+                        getAssignedCitizenInfo();
                 } else {
                     citizenId = "";
                     if(requestMarker != null) {
@@ -87,6 +130,10 @@ public class LawenforcerMapActivity extends FragmentActivity implements OnMapRea
                     if(assignedCitizenPickupLocationRefListener != null) {
                         assignedCitizenPickupLocationRef.removeEventListener(assignedCitizenPickupLocationRefListener);
                     }
+                    mCitizenInfo.setVisibility(View.GONE);
+                    mCitizenName.setText("");
+                    mCitizenPhone.setText("");
+                    mCitizenProfileImage.setImageResource(R.mipmap.ic_launcher);
                 }
             }
 
@@ -117,6 +164,33 @@ public class LawenforcerMapActivity extends FragmentActivity implements OnMapRea
                     }
                     LatLng lawenforcerLatLng = new LatLng(locationLat, locationLng);
                     requestMarker = mMap.addMarker(new MarkerOptions().position(lawenforcerLatLng).title("requested location"));
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void getAssignedCitizenInfo() {
+        mCitizenInfo.setVisibility(View.VISIBLE);
+        DatabaseReference mCitizenDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child("Citizens").child(citizenId);
+        mCitizenDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists() && dataSnapshot.getChildrenCount() > 0) {
+                    Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
+                    if(map.get("name") != null) {
+                        mCitizenName.setText(map.get("name").toString());
+                    }
+                    if(map.get("phone") != null) {
+                        mCitizenPhone.setText(map.get("phone").toString());
+                    }
+                    if(map.get("profileImageUrl") != null) {
+                        Glide.with(getApplication()).load(map.get("profileImageUrl").toString()).into(mCitizenProfileImage);
+                    }
                 }
             }
 
@@ -186,7 +260,7 @@ public class LawenforcerMapActivity extends FragmentActivity implements OnMapRea
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
+            ActivityCompat.requestPermissions(LawenforcerMapActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_REQUEST_CODE);
         }
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
     }
@@ -199,14 +273,36 @@ public class LawenforcerMapActivity extends FragmentActivity implements OnMapRea
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
+    private void disconnectLawenforcer() {
         LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("lawenforcersAvailable");
 
         GeoFire geoFire = new GeoFire(ref);
         geoFire.removeLocation(userId);
+    }
+
+    final int LOCATION_REQUEST_CODE = 1;
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case LOCATION_REQUEST_CODE: {
+                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    mapFragment.getMapAsync(this);
+                } else {
+                    Toast.makeText(getApplicationContext(), "Please provide the permission", Toast.LENGTH_LONG).show();
+                }
+                break;
+            }
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if(!isLoggingOut) {
+            disconnectLawenforcer();
+        }
     }
 }
