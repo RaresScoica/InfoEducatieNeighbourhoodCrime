@@ -42,10 +42,10 @@ public class CitizenSettingsActivity extends AppCompatActivity {
     private ImageView mProfileImage;
 
     private FirebaseAuth mAuth;
+
     private DatabaseReference mCitizenDatabase;
 
-    private String userID;
-    private String mName, mPhone, mProfileImageUrl;
+    private String userID, mName, mPhone, mProfileImageUrl;
 
     private Uri resultUri;
 

@@ -20,10 +20,13 @@ import com.google.firebase.database.FirebaseDatabase;
 public class CitizenLoginActivity extends AppCompatActivity {
 
     private EditText mEmail, mPassword;
+
     private Button mLogin, mRegistration;
 
     private FirebaseAuth mAuth;
+
     private FirebaseAuth.AuthStateListener firebaseAuthListener;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

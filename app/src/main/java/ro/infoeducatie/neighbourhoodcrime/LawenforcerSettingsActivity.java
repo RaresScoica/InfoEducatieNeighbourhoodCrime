@@ -44,11 +44,10 @@ public class LawenforcerSettingsActivity extends AppCompatActivity {
     private ImageView mProfileImage;
 
     private FirebaseAuth mAuth;
+
     private DatabaseReference mLawenforcerDatabase;
 
-    private String userID;
-    private String mName, mPhone, mProfileImageUrl;
-    private String mService;
+    private String userID, mName, mPhone, mProfileImageUrl, mService;
 
     private Uri resultUri;
 
@@ -161,7 +160,6 @@ public class LawenforcerSettingsActivity extends AppCompatActivity {
         }
 
         mService = radioButton.getText().toString();
-
 
         Map userInfo = new HashMap();
         userInfo.put("name", mName);
