@@ -41,15 +41,18 @@
             android:id="@+id/police"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:buttonTint="@color/black"
             android:text="Police" />
         <RadioButton
             android:id="@+id/firefighter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:buttonTint="@color/black"
             android:text="Firefighter" />
         <RadioButton
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:buttonTint="@color/black"
             android:text="Medic"
             android:id="@+id/medic"/>
     </RadioGroup>
