@@ -289,6 +289,9 @@ public class CitizenMapActivity extends FragmentActivity implements OnMapReadyCa
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
+        LatLng bucharest = new LatLng(44.431802, 26.102680);
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(bucharest, 11));
+
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(CitizenMapActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_REQUEST_CODE);
         }
@@ -308,11 +311,6 @@ public class CitizenMapActivity extends FragmentActivity implements OnMapReadyCa
     @Override
     public void onLocationChanged(Location location) {
         mLastLocation = location;
-
-        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-        mMap.animateCamera(CameraUpdateFactory.zoomTo(11));
     }
 
     @Override

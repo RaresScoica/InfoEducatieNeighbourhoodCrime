@@ -258,6 +258,9 @@ public class LawenforcerMapActivity extends FragmentActivity implements OnMapRea
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
+        LatLng bucharest = new LatLng(44.431802, 26.102680);
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(bucharest, 11));
+
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
@@ -277,13 +280,7 @@ public class LawenforcerMapActivity extends FragmentActivity implements OnMapRea
     @Override
     public void onLocationChanged(Location location) {
         if(getApplicationContext()!=null){
-
             mLastLocation = location;
-
-            LatLng latLng = new LatLng(location.getLatitude(),location.getLongitude());
-
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-            mMap.animateCamera(CameraUpdateFactory.zoomTo(11));
 
             String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
             DatabaseReference refAvailable = FirebaseDatabase.getInstance().getReference("lawenforcersAvailable");
