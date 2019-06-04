@@ -9,4 +9,6 @@
     <color name="aqua">#35BAFF</color>
     <color name="black">#000000</color>
     <color name="gray">#999999</color>
+    <color name="red">#ce2029</color>
+    <color name="c">#ce2029</color>
 </resources>

@@ -15,12 +15,19 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/logout"
+        android:background="@color/black"
+        android:textColor="@android:color/white"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="10dp"
         android:text="logout"/>
     <Button
-        android:layout_gravity="end"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/settings"
+        android:background="@color/black"
+        android:textColor="@android:color/white"
+        android:layout_marginTop="65dp"
+        android:layout_marginStart="10dp"
         android:text="settings"/>
     <LinearLayout
         android:id="@+id/citizenInfo"
@@ -42,27 +49,32 @@
                 android:padding="20sp"/>
             <LinearLayout
                 android:orientation="vertical"
-                android:paddingLeft="40sp"
+                android:paddingStart="40sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/citizenName"
+                    android:textSize="18sp"
                     android:paddingBottom="10sp"
                     android:paddingTop="20sp"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textSize="16sp"
                     android:id="@+id/citizenPhone"
-                    android:paddingBottom="10sp"
-                    android:paddingTop="20sp"/>
+                    android:paddingBottom="10sp"/>
             </LinearLayout>
         </LinearLayout>
         <Button
             android:id="@+id/status"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:textColor="@android:color/white"
+            android:background="@color/black"
             android:text="Finish Request"/>
     </LinearLayout>
 </FrameLayout>

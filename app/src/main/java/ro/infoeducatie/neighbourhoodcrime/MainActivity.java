@@ -14,28 +14,10 @@ public class MainActivity extends AppCompatActivity {
 
     private Button mCitizen, mLawenforcer;
 
-    private FirebaseAuth mAuth;
-
-    private FirebaseAuth.AuthStateListener firebaseAuthListener;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        mAuth = FirebaseAuth.getInstance();
-        firebaseAuthListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                if(user!=null){
-                    Intent intent = new Intent(MainActivity.this, CitizenMapActivity.class);
-                    startActivity(intent);
-                    finish();
-                    return;
-                }
-            }
-        };
 
         mCitizen = (Button) findViewById(R.id.citizen);
         mLawenforcer = (Button) findViewById(R.id.lawenforcer);
@@ -59,18 +41,6 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
         });
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        mAuth.addAuthStateListener(firebaseAuthListener);
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        mAuth.removeAuthStateListener(firebaseAuthListener);
     }
 
 }

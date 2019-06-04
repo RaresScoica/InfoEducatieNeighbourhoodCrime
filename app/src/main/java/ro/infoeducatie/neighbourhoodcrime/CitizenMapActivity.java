@@ -265,7 +265,7 @@ public class CitizenMapActivity extends FragmentActivity implements OnMapReadyCa
                     if(distance < 100) {
                         mRequest.setText("Authority arrived at location");
                     } else {
-                        mRequest.setText("Law enforcer found: " + String.valueOf(distance));
+                        mRequest.setText("Law enforcer found: " + String.valueOf(distance) + " m");
                     }
 
                      //mLawenforcerMarker = mMap.addMarker(new MarkerOptions().position(lawenforcerLatLng).title("picked authority"));
