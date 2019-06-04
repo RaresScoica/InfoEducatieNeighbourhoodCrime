@@ -22,6 +22,8 @@ public class MainActivity extends AppCompatActivity {
         mCitizen = (Button) findViewById(R.id.citizen);
         mLawenforcer = (Button) findViewById(R.id.lawenforcer);
 
+        startService(new Intent(MainActivity.this, onAppKilled.class));
+
         mCitizen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

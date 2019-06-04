@@ -11,8 +11,10 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -57,6 +59,8 @@ public class LawenforcerMapActivity extends FragmentActivity implements OnMapRea
 
     private Button mLogout, mSettings, mStatus, mEmail;
 
+    private Switch mWorkingSwitch;
+
     private String citizenId = "";
 
     private Boolean isLoggingOut = false;
@@ -92,6 +96,18 @@ public class LawenforcerMapActivity extends FragmentActivity implements OnMapRea
 
         mCitizenName = (TextView) findViewById(R.id.citizenName);
         mCitizenPhone = (TextView) findViewById(R.id.citizenPhone);
+
+        mWorkingSwitch = (Switch) findViewById(R.id.workingSwitch);
+        mWorkingSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked) {
+                    connectLawenforcer();
+                } else {
+                    disconnectLawenforcer();
+                }
+            }
+        });
 
         mEmail = (Button) findViewById(R.id.email);
         mEmail.setOnClickListener(new View.OnClickListener() {
@@ -308,11 +324,6 @@ public class LawenforcerMapActivity extends FragmentActivity implements OnMapRea
         mLocationRequest.setInterval(1000);
         mLocationRequest.setFastestInterval(1000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
-
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(LawenforcerMapActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_REQUEST_CODE);
-        }
-        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
     }
 
     @Override
@@ -323,6 +334,13 @@ public class LawenforcerMapActivity extends FragmentActivity implements OnMapRea
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
+    }
+
+    private void connectLawenforcer() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(LawenforcerMapActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_REQUEST_CODE);
+        }
+        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
     }
 
     private void disconnectLawenforcer() {
@@ -347,14 +365,6 @@ public class LawenforcerMapActivity extends FragmentActivity implements OnMapRea
                 }
                 break;
             }
-        }
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if(!isLoggingOut) {
-            disconnectLawenforcer();
         }
     }
 
