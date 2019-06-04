@@ -21,7 +21,7 @@ public class LawenforcerLoginActivity extends AppCompatActivity {
 
     private EditText mEmail, mPassword;
 
-    private Button mLogin, mRegistration;
+    private Button mLogin, mRegistration, mEmailBtn;
 
     private FirebaseAuth mAuth;
 
@@ -51,6 +51,7 @@ public class LawenforcerLoginActivity extends AppCompatActivity {
 
         mLogin = (Button) findViewById(R.id.login);
         mRegistration = (Button) findViewById(R.id.registration);
+        mEmailBtn = (Button) findViewById(R.id.email_btn);
 
         mRegistration.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -86,6 +87,14 @@ public class LawenforcerLoginActivity extends AppCompatActivity {
                         }
                     }
                 });
+            }
+        });
+        mEmailBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(LawenforcerLoginActivity.this, EmailUsActivity.class);
+                startActivity(intent);
+                return;
             }
         });
     }

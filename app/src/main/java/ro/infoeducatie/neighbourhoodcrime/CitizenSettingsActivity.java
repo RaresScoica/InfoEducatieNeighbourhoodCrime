@@ -38,7 +38,7 @@ public class CitizenSettingsActivity extends AppCompatActivity {
 
     private EditText mNameField, mPhoneField;
 
-    private Button mBack, mConfirm;
+    private Button mBack, mConfirm, mEmailBtn;
 
     private ImageView mProfileImage;
 
@@ -62,6 +62,7 @@ public class CitizenSettingsActivity extends AppCompatActivity {
 
         mBack = (Button) findViewById(R.id.back);
         mConfirm = (Button) findViewById(R.id.confirm);
+        mEmailBtn = (Button) findViewById(R.id.email_btn);
 
         mAuth = FirebaseAuth.getInstance();
         userID = mAuth.getCurrentUser().getUid();
@@ -89,6 +90,14 @@ public class CitizenSettingsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 finish();
+                return;
+            }
+        });
+        mEmailBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(CitizenSettingsActivity.this, EmailUsActivity.class);
+                startActivity(intent);
                 return;
             }
         });

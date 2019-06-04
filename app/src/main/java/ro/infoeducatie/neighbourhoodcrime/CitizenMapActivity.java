@@ -48,7 +48,7 @@ public class CitizenMapActivity extends FragmentActivity implements OnMapReadyCa
     Location mLastLocation;
     LocationRequest mLocationRequest;
 
-    private Button mLogout, mRequest, mSettings;
+    private Button mLogout, mRequest, mSettings, mEmail;
 
     private LatLng requestLocation;
 
@@ -77,6 +77,7 @@ public class CitizenMapActivity extends FragmentActivity implements OnMapReadyCa
         }
 
         mSettings = (Button) findViewById(R.id.settings);
+        mEmail = (Button) findViewById(R.id.email);
 
         mRadioGroup = (RadioGroup) findViewById(R.id.radioGroup);
         mRadioGroup.check(R.id.police);
@@ -151,6 +152,14 @@ public class CitizenMapActivity extends FragmentActivity implements OnMapReadyCa
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(CitizenMapActivity.this, CitizenSettingsActivity.class);
+                startActivity(intent);
+                return;
+            }
+        });
+        mEmail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(CitizenMapActivity.this, EmailActivity.class);
                 startActivity(intent);
                 return;
             }

@@ -39,7 +39,7 @@ public class LawenforcerSettingsActivity extends AppCompatActivity {
 
     private EditText mNameField, mPhoneField;
 
-    private Button mBack, mConfirm;
+    private Button mBack, mConfirm, mEmailBtn;
 
     private ImageView mProfileImage;
 
@@ -67,6 +67,7 @@ public class LawenforcerSettingsActivity extends AppCompatActivity {
 
         mBack = (Button) findViewById(R.id.back);
         mConfirm = (Button) findViewById(R.id.confirm);
+        mEmailBtn = (Button) findViewById(R.id.email_btn);
 
         mAuth = FirebaseAuth.getInstance();
         userID = mAuth.getCurrentUser().getUid();
@@ -87,19 +88,21 @@ public class LawenforcerSettingsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 saveUserInformation();
-                Intent intent = new Intent(LawenforcerSettingsActivity.this, LawenforcerMapActivity.class);
-                startActivity(intent);
-                finish();
-                return;
             }
         });
 
         mBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(LawenforcerSettingsActivity.this, LawenforcerMapActivity.class);
-                startActivity(intent);
                 finish();
+                return;
+            }
+        });
+        mEmailBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(LawenforcerSettingsActivity.this, EmailUsActivity.class);
+                startActivity(intent);
                 return;
             }
         });

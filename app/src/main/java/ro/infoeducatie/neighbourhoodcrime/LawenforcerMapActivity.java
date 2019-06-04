@@ -55,7 +55,7 @@ public class LawenforcerMapActivity extends FragmentActivity implements OnMapRea
     Location mLastLocation;
     LocationRequest mLocationRequest;
 
-    private Button mLogout, mSettings, mStatus;
+    private Button mLogout, mSettings, mStatus, mEmail;
 
     private String citizenId = "";
 
@@ -93,13 +93,22 @@ public class LawenforcerMapActivity extends FragmentActivity implements OnMapRea
         mCitizenName = (TextView) findViewById(R.id.citizenName);
         mCitizenPhone = (TextView) findViewById(R.id.citizenPhone);
 
+        mEmail = (Button) findViewById(R.id.email);
+        mEmail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(LawenforcerMapActivity.this, EmailActivity.class);
+                startActivity(intent);
+                return;
+            }
+        });
+
         mSettings = (Button) findViewById(R.id.settings);
         mSettings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(LawenforcerMapActivity.this, LawenforcerSettingsActivity.class);
                 startActivity(intent);
-                finish();
                 return;
             }
         });

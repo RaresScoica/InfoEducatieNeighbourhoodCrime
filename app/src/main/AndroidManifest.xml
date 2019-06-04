@@ -17,10 +17,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/NoBarTheme">
-        <activity android:name=".LawenforcerSettingsActivity"
+        <activity android:name=".EmailUsActivity"></activity>
+        <activity android:name=".EmailActivity" />
+        <activity
+            android:name=".LawenforcerSettingsActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".CitizenSettingsActivity"
-            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".CitizenSettingsActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".SplashActivity"
             android:screenOrientation="portrait">
@@ -30,8 +34,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".LawenforcerMapActivity"
-            android:label="@string/title_activity_citizen_map"/>
+        <activity
+            android:name=".LawenforcerMapActivity"
+            android:label="@string/title_activity_citizen_map" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -47,10 +52,12 @@
         <activity
             android:name=".CitizenMapActivity"
             android:label="@string/title_activity_citizen_map" />
-        <activity android:name=".LawenforcerLoginActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".CitizenLoginActivity"
-            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".LawenforcerLoginActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".CitizenLoginActivity"
+            android:screenOrientation="portrait" />
         <activity android:name=".MainActivity" />
     </application>
 
