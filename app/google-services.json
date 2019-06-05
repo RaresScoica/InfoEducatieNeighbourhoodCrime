@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "730169557859",
+    "firebase_url": "https://neighbourhood-crime.firebaseio.com",
+    "project_id": "neighbourhood-crime",
+    "storage_bucket": "neighbourhood-crime.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:730169557859:android:cd8f6a9ac894d5d3",
+        "android_client_info": {
+          "package_name": "ro.infoeducatie.neighbourhoodcrime"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "730169557859-mth2jvdepkqm0ls3v0b5kogftao646ln.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "ro.infoeducatie.neighbourhoodcrime",
+            "certificate_hash": "2dd6d8b304ae57d8a915dd4b267361ff3236011f"
+          }
+        },
+        {
+          "client_id": "730169557859-l15t9eohked54lhnfetqk2p8f8b0vsde.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC33XalX5Pb7QbdEJxl0spmzPb4aQB-f8k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "730169557859-l15t9eohked54lhnfetqk2p8f8b0vsde.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
