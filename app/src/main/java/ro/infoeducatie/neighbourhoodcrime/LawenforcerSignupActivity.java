@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -17,9 +19,12 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-public class CitizenLoginActivity extends AppCompatActivity {
+import java.util.HashMap;
+import java.util.Map;
 
-    private EditText mEmail, mPassword;
+public class LawenforcerSignupActivity extends AppCompatActivity {
+
+    private EditText mEmail, mPassword, mName, mId;
 
     private Button mLogin, mRegistration, mEmailBtn;
 
@@ -27,18 +32,23 @@ public class CitizenLoginActivity extends AppCompatActivity {
 
     private FirebaseAuth.AuthStateListener firebaseAuthListener;
 
+    private RadioGroup mRadioGroup;
+
+    private String mService;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_citizen_login);
+        setContentView(R.layout.activity_lawenforcer_signup);
 
         mAuth = FirebaseAuth.getInstance();
+
         firebaseAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 if(user!=null){
-                    Intent intent = new Intent(CitizenLoginActivity.this, CitizenMapActivity.class);
+                    Intent intent = new Intent(LawenforcerSignupActivity.this, LawenforcerMapActivity.class);
                     startActivity(intent);
                     finish();
                     return;
@@ -48,40 +58,66 @@ public class CitizenLoginActivity extends AppCompatActivity {
 
         mEmail = (EditText) findViewById(R.id.email);
         mPassword = (EditText) findViewById(R.id.password);
+        mName = (EditText) findViewById(R.id.name);
+        mId = (EditText) findViewById(R.id.id);
 
         mLogin = (Button) findViewById(R.id.login);
         mRegistration = (Button) findViewById(R.id.registration);
         mEmailBtn = (Button) findViewById(R.id.email_btn);
 
-        mRegistration.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(CitizenLoginActivity.this, CitizenSignupActivity.class);
-                startActivity(intent);
-                return;
-            }
-        });
+        mRadioGroup = (RadioGroup) findViewById(R.id.radioGroup);
 
-        mLogin.setOnClickListener(new View.OnClickListener() {
+        mRegistration.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 final String email = mEmail.getText().toString();
                 final String password = mPassword.getText().toString();
-                mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(CitizenLoginActivity.this, new OnCompleteListener<AuthResult>() {
+                mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(LawenforcerSignupActivity.this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(!task.isSuccessful()){
-                            Toast.makeText(CitizenLoginActivity.this, "sign in error", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(LawenforcerSignupActivity.this, "sign up error", Toast.LENGTH_SHORT).show();
+                        }
+                        else{
+                            String user_id = mAuth.getCurrentUser().getUid();
+                            DatabaseReference current_user_db = FirebaseDatabase.getInstance().getReference().child("Users").child("Lawenforcers").child(user_id);
+
+                            final String name = mName.getText().toString();
+                            final String id = mId.getText().toString();
+                            int selectId = mRadioGroup.getCheckedRadioButtonId();
+
+                            final RadioButton radioButton = (RadioButton) findViewById(selectId);
+
+                            if(radioButton.getText() == null) {
+                                return;
+                            }
+                            mService = radioButton.getText().toString();
+
+                            Map newPost = new HashMap();
+                            newPost.put("name", name);
+                            newPost.put("id", id);
+                            newPost.put("service", mService);
+
+                            current_user_db.setValue(newPost);
                         }
                     }
                 });
             }
         });
 
+        mLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(LawenforcerSignupActivity.this, LawenforcerLoginActivity.class);
+                startActivity(intent);
+                return;
+            }
+        });
+
         mEmailBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(CitizenLoginActivity.this, EmailUsActivity.class);
+                Intent intent = new Intent(LawenforcerSignupActivity.this, EmailUsActivity.class);
                 startActivity(intent);
                 return;
             }

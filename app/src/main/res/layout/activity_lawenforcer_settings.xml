@@ -21,10 +21,12 @@
         android:id="@+id/name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
         android:hint="Name"
-        android:textColor="@color/gray"
-        android:textColorHint="@color/gray"
+        android:textColor="@android:color/white"
+        android:textColorHint="@android:color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/profileImage" />
@@ -33,11 +35,13 @@
         android:id="@+id/phone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
         android:hint="Id"
-        android:textColorHint="@color/gray"
-        android:textColor="@color/gray"
         android:inputType="number"
+        android:textColor="@android:color/white"
+        android:textColorHint="@android:color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/name" />
@@ -46,7 +50,9 @@
         android:id="@+id/radioGroup"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -56,25 +62,25 @@
             android:id="@+id/police"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@android:color/white"
             android:buttonTint="@android:color/white"
-            android:text="Police" />
+            android:text="Police"
+            android:textColor="@android:color/white" />
 
         <RadioButton
             android:id="@+id/firefighter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@android:color/white"
             android:buttonTint="@android:color/white"
-            android:text="Firefighter" />
+            android:text="Firefighter"
+            android:textColor="@android:color/white" />
 
         <RadioButton
             android:id="@+id/medic"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@android:color/white"
             android:buttonTint="@android:color/white"
-            android:text="Medic" />
+            android:text="Medic"
+            android:textColor="@android:color/white" />
     </RadioGroup>
 
     <Button
