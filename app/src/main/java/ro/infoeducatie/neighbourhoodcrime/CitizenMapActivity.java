@@ -226,7 +226,7 @@ public class CitizenMapActivity extends FragmentActivity implements OnMapReadyCa
 
             @Override
             public void onGeoQueryReady() {
-                if(!lawenforcerFound) {
+                if(!lawenforcerFound && radius <= 1000) {
                     radius++;
                     getClosestLawenforcer();
                 }
