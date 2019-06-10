@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -65,6 +67,9 @@ public class LawenforcerSignupActivity extends AppCompatActivity {
         mRegistration = (Button) findViewById(R.id.registration);
         mEmailBtn = (Button) findViewById(R.id.email_btn);
 
+        mEmail.addTextChangedListener(loginTextWatcher);
+        mPassword.addTextChangedListener(loginTextWatcher);
+
         mRadioGroup = (RadioGroup) findViewById(R.id.radioGroup);
 
         mRegistration.setOnClickListener(new View.OnClickListener() {
@@ -123,6 +128,26 @@ public class LawenforcerSignupActivity extends AppCompatActivity {
             }
         });
     }
+
+    private TextWatcher loginTextWatcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            String usernameInput = mEmail.getText().toString().trim();
+            String passwordInput = mPassword.getText().toString().trim();
+
+            mRegistration.setEnabled(!usernameInput.isEmpty() && !passwordInput.isEmpty());
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+
+        }
+    };
 
     @Override
     protected void onStart() {
