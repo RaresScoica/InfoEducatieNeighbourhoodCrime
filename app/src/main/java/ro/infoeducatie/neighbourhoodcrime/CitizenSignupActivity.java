@@ -87,7 +87,6 @@ public class CitizenSignupActivity extends AppCompatActivity {
                             Map newPost = new HashMap();
                             newPost.put("name", name);
                             newPost.put("phone", phone);
-                            newPost.put("accountType", "citizen");
 
                             current_user_db.setValue(newPost);
                         }

@@ -19,12 +19,6 @@ public class MainActivity extends AppCompatActivity {
 
     private Button mCitizen, mLawenforcer;
 
-    private DatabaseReference mRefDatatbase;
-
-    private FirebaseAuth mAuth;
-
-    private String userId;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,35 +26,6 @@ public class MainActivity extends AppCompatActivity {
 
         mCitizen = (Button) findViewById(R.id.citizen);
         mLawenforcer = (Button) findViewById(R.id.lawenforcer);
-
-        startService(new Intent(MainActivity.this, onAppKilled.class));
-
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        mAuth = FirebaseAuth.getInstance();
-        if (user != null) {
-            userId = mAuth.getCurrentUser().getUid();
-
-            mRefDatatbase = FirebaseDatabase.getInstance().getReference();
-            mRefDatatbase.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    if (dataSnapshot.child("Users").child("Citizens").hasChild(userId)) {
-                        Intent intent = new Intent(MainActivity.this, CitizenMapActivity.class);
-                        startActivity(intent);
-                        finish();
-                    } else {
-                        Intent intent = new Intent(MainActivity.this, LawenforcerMapActivity.class);
-                        startActivity(intent);
-                        finish();
-                    }
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                }
-            });
-        }
 
         mCitizen.setOnClickListener(new View.OnClickListener() {
             @Override
