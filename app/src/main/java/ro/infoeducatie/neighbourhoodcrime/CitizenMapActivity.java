@@ -277,7 +277,7 @@ public class CitizenMapActivity extends FragmentActivity implements OnMapReadyCa
                         mRequest.setText("Law enforcer found: " + String.valueOf(distance) + " m");
                     }
 
-                     //mLawenforcerMarker = mMap.addMarker(new MarkerOptions().position(lawenforcerLatLng).title("picked authority"));
+                    //mLawenforcerMarker = mMap.addMarker(new MarkerOptions().position(lawenforcerLatLng).title("picked authority"));
                 }
             }
 

@@ -162,9 +162,9 @@ public class LawenforcerMapActivity extends FragmentActivity implements OnMapRea
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists()) {
-                        citizenId = dataSnapshot.getValue().toString();
-                        getAssignedCitizenPickupLocation();
-                        getAssignedCitizenInfo();
+                    citizenId = dataSnapshot.getValue().toString();
+                    getAssignedCitizenPickupLocation();
+                    getAssignedCitizenInfo();
                 } else {
                     endRequest();
                 }
