@@ -214,6 +214,7 @@ public class LawenforcerMapActivity extends FragmentActivity implements OnMapRea
                 .withListener(this)
                 .alternativeRoutes(false)
                 .waypoints(new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()), requestLatLng)
+                .key("AIzaSyC33XalX5Pb7QbdEJxl0spmzPb4aQB-f8k")
                 .build();
         routing.execute();
     }
@@ -373,11 +374,11 @@ public class LawenforcerMapActivity extends FragmentActivity implements OnMapRea
 
     @Override
     public void onRoutingFailure(RouteException e) {
-        /*if(e != null) {
+        if(e != null) {
             Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
         }else {
             Toast.makeText(this, "Something went wrong, Try again", Toast.LENGTH_SHORT).show();
-        }*/
+        }
     }
 
     @Override
