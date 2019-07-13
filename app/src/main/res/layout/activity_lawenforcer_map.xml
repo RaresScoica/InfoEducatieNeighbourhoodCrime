@@ -6,15 +6,93 @@
     android:layout_height="match_parent"
     tools:context=".LawenforcerLoginActivity" >
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/logout"
-        android:text="logout"/>
     <fragment
         android:id="@+id/map"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/logout"
+        android:background="@color/black"
+        android:textColor="@android:color/white"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="10dp"
+        android:text="logout"/>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/settings"
+        android:background="@color/black"
+        android:textColor="@android:color/white"
+        android:layout_marginTop="65dp"
+        android:layout_marginStart="10dp"
+        android:text="settings"/>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/email"
+        android:background="@color/black"
+        android:textColor="@android:color/white"
+        android:layout_marginTop="120dp"
+        android:layout_marginStart="10dp"
+        android:text="email"/>
+    <Switch
+        android:id="@+id/workingSwitch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Available"
+        android:textSize="16sp"
+        android:thumbTint="@color/black"
+        android:layout_marginStart="10sp"
+        android:layout_marginTop="180sp"/>
+    <LinearLayout
+        android:id="@+id/citizenInfo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:visibility="gone"
+        android:orientation="vertical"
+        android:background="@android:color/white">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <ImageView
+                android:layout_width="100sp"
+                android:layout_height="100sp"
+                android:id="@+id/citizenProfileImage"
+                android:src="@mipmap/ic_logo"
+                android:padding="20sp"/>
+            <LinearLayout
+                android:orientation="vertical"
+                android:paddingStart="40sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/citizenName"
+                    android:textSize="18sp"
+                    android:paddingBottom="10sp"
+                    android:paddingTop="20sp"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:id="@+id/citizenPhone"
+                    android:paddingBottom="10sp"/>
+            </LinearLayout>
+        </LinearLayout>
+        <Button
+            android:id="@+id/status"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:textColor="@android:color/white"
+            android:background="@color/black"
+            android:text="Finish Request"/>
+    </LinearLayout>
 </FrameLayout>

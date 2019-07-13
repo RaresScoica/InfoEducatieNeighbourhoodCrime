@@ -4,9 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="30dp"
+    tools:context=".CitizenSettingsActivity"
+    android:orientation="vertical"
     android:background="@color/black"
-    tools:context=".LawenforcerLoginActivity">
+    android:padding="30dp">
 
     <ImageView
         android:id="@+id/profileImage"
@@ -17,14 +18,13 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/email"
+        android:id="@+id/name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:hint="Email"
-        android:inputType="textEmailAddress"
+        android:hint="Name"
         android:textColor="@android:color/white"
         android:textColorHint="@android:color/white"
         app:layout_constraintEnd_toEndOf="parent"
@@ -32,46 +32,82 @@
         app:layout_constraintTop_toBottomOf="@+id/profileImage" />
 
     <EditText
-        android:id="@+id/password"
+        android:id="@+id/phone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:hint="Password"
-        android:inputType="textPassword"
+        android:hint="Id"
+        android:inputType="number"
         android:textColor="@android:color/white"
         android:textColorHint="@android:color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/email" />
+        app:layout_constraintTop_toBottomOf="@+id/name" />
+
+    <RadioGroup
+        android:id="@+id/radioGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/phone">
+
+        <RadioButton
+            android:id="@+id/police"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:buttonTint="@android:color/white"
+            android:text="Police"
+            android:textColor="@android:color/white" />
+
+        <RadioButton
+            android:id="@+id/firefighter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:buttonTint="@android:color/white"
+            android:text="Firefighter"
+            android:textColor="@android:color/white" />
+
+        <RadioButton
+            android:id="@+id/medic"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:buttonTint="@android:color/white"
+            android:text="Medic"
+            android:textColor="@android:color/white" />
+    </RadioGroup>
 
     <Button
-        android:id="@+id/registration"
+        android:id="@+id/confirm"
         android:layout_width="120dp"
         android:layout_height="120dp"
         android:layout_marginTop="16dp"
         android:background="@drawable/ic_round_btn"
-        android:text="register"
+        android:text="confirm"
         android:textColor="@color/gray"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/password" />
+        app:layout_constraintTop_toBottomOf="@+id/radioGroup" />
 
     <Button
-        android:id="@+id/login"
+        android:id="@+id/back"
         android:layout_width="120dp"
         android:layout_height="120dp"
         android:layout_marginTop="16dp"
         android:background="@drawable/ic_round_btn"
-        android:text="login"
-        android:enabled="false"
+        android:text="back"
         android:textColor="@color/gray"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/password" />
+        app:layout_constraintTop_toBottomOf="@+id/radioGroup" />
 
     <TextView
         android:id="@+id/textView"
