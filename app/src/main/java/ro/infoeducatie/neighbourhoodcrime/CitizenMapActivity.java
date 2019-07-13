@@ -130,6 +130,7 @@ public class CitizenMapActivity extends FragmentActivity implements OnMapReadyCa
                     if(radioButton.getText() == null) {
                         return;
                     }
+                    
                     requestService = radioButton.getText().toString();
 
                     requestBol = true;
