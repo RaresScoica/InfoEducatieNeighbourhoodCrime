@@ -25,8 +25,10 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
@@ -69,9 +71,10 @@ public class CitizenMapActivity extends FragmentActivity implements OnMapReadyCa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_citizen_map);
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
+
+        GoogleMapOptions options = new GoogleMapOptions().compassEnabled(true);
 
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(CitizenMapActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_REQUEST_CODE);
@@ -133,7 +136,7 @@ public class CitizenMapActivity extends FragmentActivity implements OnMapReadyCa
                     if(radioButton.getText() == null) {
                         return;
                     }
-                    
+
                     requestService = radioButton.getText().toString();
 
                     requestBol = true;
@@ -144,7 +147,7 @@ public class CitizenMapActivity extends FragmentActivity implements OnMapReadyCa
                     geoFire.setLocation(userId, new GeoLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude()));
 
                     requestLocation = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
-                    requestMarker = mMap.addMarker(new MarkerOptions().position(requestLocation).title("Issue Here"));
+                    requestMarker = mMap.addMarker(new MarkerOptions().position(requestLocation).title("Issue here"));
 
                     mRequest.setText("Searching for nearby troops...");
 
@@ -205,7 +208,7 @@ public class CitizenMapActivity extends FragmentActivity implements OnMapReadyCa
                                     lawenforcerRef.updateChildren(map);
 
                                     getLawenforcerLocation();
-                                    mRequest.setText("Looking for Authority Location...");
+                                    mRequest.setText("Looking for Authority location...");
                                 }
                             }
                         }
@@ -230,7 +233,7 @@ public class CitizenMapActivity extends FragmentActivity implements OnMapReadyCa
 
             @Override
             public void onGeoQueryReady() {
-                if(!lawenforcerFound && radius<=1000) {
+                if(!lawenforcerFound) {
                     radius++;
                     getClosestLawenforcer();
                 }
@@ -294,7 +297,6 @@ public class CitizenMapActivity extends FragmentActivity implements OnMapReadyCa
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-
         try {
             boolean success = googleMap.setMapStyle(
                     MapStyleOptions.loadRawResourceStyle(this, R.raw.mapstyle));
@@ -307,8 +309,12 @@ public class CitizenMapActivity extends FragmentActivity implements OnMapReadyCa
 
         mMap = googleMap;
 
-        LatLng bucharest = new LatLng(44.431802, 26.102680);
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(bucharest, 11));
+        mMap.setPadding(0,20,0,250);
+        mMap.getUiSettings().isCompassEnabled();
+        mMap.getUiSettings().setMapToolbarEnabled(true);
+
+        /*LatLng bucharest = new LatLng(44.431802, 26.102680);
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(bucharest, 11));*/
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(CitizenMapActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_REQUEST_CODE);
@@ -329,6 +335,10 @@ public class CitizenMapActivity extends FragmentActivity implements OnMapReadyCa
     @Override
     public void onLocationChanged(Location location) {
         mLastLocation = location;
+
+        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 11);
+        mMap.animateCamera(cameraUpdate);
     }
 
     @Override
@@ -353,6 +363,7 @@ public class CitizenMapActivity extends FragmentActivity implements OnMapReadyCa
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
     }
+
     final int LOCATION_REQUEST_CODE = 1;
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {

@@ -21,6 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.directions.route.AbstractRouting;
 import com.directions.route.Route;
 import com.directions.route.RouteException;
@@ -32,10 +33,13 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
@@ -80,11 +84,12 @@ public class LawenforcerMapActivity extends FragmentActivity implements OnMapRea
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lawenforcer_map);
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         polylines = new ArrayList<>();
 
         mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
+
+        GoogleMapOptions options = new GoogleMapOptions().compassEnabled(true);
 
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(LawenforcerMapActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_REQUEST_CODE);
@@ -199,7 +204,7 @@ public class LawenforcerMapActivity extends FragmentActivity implements OnMapRea
                         locationLng = Double.parseDouble(map.get(1).toString());
                     }
                     LatLng requestLatLng = new LatLng(locationLat, locationLng);
-                    requestMarker = mMap.addMarker(new MarkerOptions().position(requestLatLng).title("requested location"));
+                    requestMarker = mMap.addMarker(new MarkerOptions().position(requestLatLng).title("Requested location"));
                     getRouteToMarker(requestLatLng);
                 }
             }
@@ -237,7 +242,7 @@ public class LawenforcerMapActivity extends FragmentActivity implements OnMapRea
                         mCitizenPhone.setText(map.get("phone").toString());
                     }
                     if(map.get("profileImageUrl") != null) {
-                        Glide.with(getApplication()).load(map.get("profileImageUrl").toString()).into(mCitizenProfileImage);
+                        Glide.with(getApplication()).load(map.get("profileImageUrl").toString()).apply(RequestOptions.circleCropTransform()).into(mCitizenProfileImage);
                     }
                 }
             }
@@ -276,7 +281,6 @@ public class LawenforcerMapActivity extends FragmentActivity implements OnMapRea
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-
         try {
             boolean success = googleMap.setMapStyle(
                     MapStyleOptions.loadRawResourceStyle(this, R.raw.mapstyle));
@@ -289,8 +293,12 @@ public class LawenforcerMapActivity extends FragmentActivity implements OnMapRea
 
         mMap = googleMap;
 
-        LatLng bucharest = new LatLng(44.431802, 26.102680);
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(bucharest, 11));
+        mMap.setPadding(0,20,0,350);
+        mMap.getUiSettings().isCompassEnabled();
+        mMap.getUiSettings().setMapToolbarEnabled(true);
+
+        /*LatLng bucharest = new LatLng(44.431802, 26.102680);
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(bucharest, 11));*/
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
@@ -310,6 +318,10 @@ public class LawenforcerMapActivity extends FragmentActivity implements OnMapRea
 
     @Override
     public void onLocationChanged(Location location) {
+        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 11);
+        mMap.animateCamera(cameraUpdate);
+
         if(getApplicationContext()!=null){
             mLastLocation = location;
 

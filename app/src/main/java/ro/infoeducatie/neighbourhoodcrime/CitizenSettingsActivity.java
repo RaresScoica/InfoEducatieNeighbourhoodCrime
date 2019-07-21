@@ -17,6 +17,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -121,7 +122,7 @@ public class CitizenSettingsActivity extends AppCompatActivity {
                     }
                     if(map.get("profileImageUrl") != null) {
                         mProfileImageUrl = map.get("profileImageUrl").toString();
-                        Glide.with(getApplication()).load(mProfileImageUrl).into(mProfileImage);
+                        Glide.with(getApplication()).load(mProfileImageUrl).apply(RequestOptions.circleCropTransform()).into(mProfileImage);
                     }
                 }
             }
