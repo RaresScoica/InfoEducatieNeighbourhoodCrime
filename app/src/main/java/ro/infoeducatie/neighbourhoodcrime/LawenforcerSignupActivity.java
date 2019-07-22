@@ -102,7 +102,6 @@ public class LawenforcerSignupActivity extends AppCompatActivity {
                             newPost.put("name", name);
                             newPost.put("id", id);
                             newPost.put("service", mService);
-
                             current_user_db.setValue(newPost);
                         }
                     }

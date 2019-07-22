@@ -39,7 +39,6 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
@@ -74,11 +73,13 @@ public class LawenforcerMapActivity extends FragmentActivity implements OnMapRea
 
     private SupportMapFragment mapFragment;
 
-    private LinearLayout mCitizenInfo;
+    private LinearLayout mCitizenInfo, mFinish;
 
     private ImageView mCitizenProfileImage;
 
     private TextView mCitizenName, mCitizenPhone;
+
+    private LatLng lawenforcerLatLng;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,8 +98,8 @@ public class LawenforcerMapActivity extends FragmentActivity implements OnMapRea
             mapFragment.getMapAsync(this);
         }
 
-
         mCitizenInfo = (LinearLayout) findViewById(R.id.citizenInfo);
+        mFinish = (LinearLayout) findViewById(R.id.finish);
 
         mCitizenProfileImage = (ImageView) findViewById(R.id.citizenProfileImage);
 
@@ -206,6 +207,20 @@ public class LawenforcerMapActivity extends FragmentActivity implements OnMapRea
                     LatLng requestLatLng = new LatLng(locationLat, locationLng);
                     requestMarker = mMap.addMarker(new MarkerOptions().position(requestLatLng).title("Requested location"));
                     getRouteToMarker(requestLatLng);
+
+                    Location loc1 = new Location("");
+                    loc1.setLatitude(requestLatLng.latitude);
+                    loc1.setLongitude(requestLatLng.longitude);
+
+                    Location loc2 = new Location("");
+                    loc2.setLatitude(lawenforcerLatLng.latitude);
+                    loc2.setLongitude(lawenforcerLatLng.longitude);
+
+                    float distance = loc1.distanceTo(loc2);
+
+                    if(distance < 100) {
+                        mFinish.setVisibility(View.VISIBLE);
+                    }
                 }
             }
 
@@ -274,9 +289,10 @@ public class LawenforcerMapActivity extends FragmentActivity implements OnMapRea
             assignedCitizenPickupLocationRef.removeEventListener(assignedCitizenPickupLocationRefListener);
         }
         mCitizenInfo.setVisibility(View.GONE);
+        mFinish.setVisibility(View.GONE);
         mCitizenName.setText("");
         mCitizenPhone.setText("");
-        mCitizenProfileImage.setImageResource(R.mipmap.ic_launcher);
+        mCitizenProfileImage.setImageResource(R.mipmap.ic_logo);
     }
 
     @Override
@@ -296,9 +312,6 @@ public class LawenforcerMapActivity extends FragmentActivity implements OnMapRea
         mMap.setPadding(0,20,0,350);
         mMap.getUiSettings().isCompassEnabled();
         mMap.getUiSettings().setMapToolbarEnabled(true);
-
-        /*LatLng bucharest = new LatLng(44.431802, 26.102680);
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(bucharest, 11));*/
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
@@ -324,6 +337,8 @@ public class LawenforcerMapActivity extends FragmentActivity implements OnMapRea
 
         if(getApplicationContext()!=null){
             mLastLocation = location;
+
+            lawenforcerLatLng = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
 
             String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
             DatabaseReference refAvailable = FirebaseDatabase.getInstance().getReference("lawenforcersAvailable");
