@@ -71,11 +71,15 @@ public class LawenforcerLoginActivity extends AppCompatActivity {
                 final String email = mEmail.getText().toString();
                 final String password = mPassword.getText().toString();
 
+                if(password.length() < 6) {
+                    Toast.makeText(LawenforcerLoginActivity.this, "Password must be at least 6 characters long", Toast.LENGTH_LONG).show();
+                }
+
                 mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(LawenforcerLoginActivity.this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(!task.isSuccessful()){
-                            Toast.makeText(LawenforcerLoginActivity.this, "sign in error", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(LawenforcerLoginActivity.this, "Sign in error", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });

@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -48,6 +49,8 @@ public class CitizenSettingsActivity extends AppCompatActivity {
 
     private Uri resultUri;
 
+    private TextView mProfileImageText;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,6 +64,8 @@ public class CitizenSettingsActivity extends AppCompatActivity {
         mBack = (Button) findViewById(R.id.back);
         mConfirm = (Button) findViewById(R.id.confirm);
         mEmailBtn = (Button) findViewById(R.id.email_btn);
+
+        mProfileImageText = (TextView) findViewById(R.id.profileImageText);
 
         mAuth = FirebaseAuth.getInstance();
         userID = mAuth.getCurrentUser().getUid();
@@ -116,6 +121,7 @@ public class CitizenSettingsActivity extends AppCompatActivity {
                         mPhoneField.setText(mPhone);
                     }
                     if(map.get("profileImageUrl") != null) {
+                        mProfileImageText.setVisibility(View.GONE);
                         mProfileImageUrl = map.get("profileImageUrl").toString();
                         Glide.with(getApplication()).load(mProfileImageUrl).apply(RequestOptions.circleCropTransform()).into(mProfileImage);
                     }

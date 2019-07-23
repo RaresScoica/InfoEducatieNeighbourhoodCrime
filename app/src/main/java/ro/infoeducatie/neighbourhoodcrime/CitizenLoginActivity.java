@@ -2,9 +2,11 @@ package ro.infoeducatie.neighbourhoodcrime;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
@@ -71,11 +73,15 @@ public class CitizenLoginActivity extends AppCompatActivity {
                 final String email = mEmail.getText().toString();
                 final String password = mPassword.getText().toString();
 
+                if(password.length() < 6) {
+                    Toast.makeText(CitizenLoginActivity.this, "Password must be at least 6 characters long", Toast.LENGTH_LONG).show();
+                }
+
                 mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(CitizenLoginActivity.this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(!task.isSuccessful()){
-                            Toast.makeText(CitizenLoginActivity.this, "sign in error", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(CitizenLoginActivity.this, "Sign in error", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });

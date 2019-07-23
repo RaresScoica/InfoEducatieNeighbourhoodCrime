@@ -28,7 +28,7 @@ public class LawenforcerSignupActivity extends AppCompatActivity {
 
     private EditText mEmail, mPassword, mName, mId;
 
-    private Button mLogin, mRegistration, mEmailBtn;
+    private Button mRegistration, mEmailBtn;
 
     private FirebaseAuth mAuth;
 
@@ -63,7 +63,6 @@ public class LawenforcerSignupActivity extends AppCompatActivity {
         mName = (EditText) findViewById(R.id.name);
         mId = (EditText) findViewById(R.id.id);
 
-        mLogin = (Button) findViewById(R.id.login);
         mRegistration = (Button) findViewById(R.id.registration);
         mEmailBtn = (Button) findViewById(R.id.email_btn);
 
@@ -77,13 +76,19 @@ public class LawenforcerSignupActivity extends AppCompatActivity {
             public void onClick(View v) {
                 final String email = mEmail.getText().toString();
                 final String password = mPassword.getText().toString();
+
+                if(password.length() < 6) {
+                    Toast.makeText(LawenforcerSignupActivity.this, "Password must be at least 6 characters long", Toast.LENGTH_LONG).show();
+                }
+
                 mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(LawenforcerSignupActivity.this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(!task.isSuccessful()){
-                            Toast.makeText(LawenforcerSignupActivity.this, "sign up error", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(LawenforcerSignupActivity.this, "Sign up error", Toast.LENGTH_SHORT).show();
                         }
                         else{
+                            Toast.makeText(LawenforcerSignupActivity.this, "Registered successfully", Toast.LENGTH_SHORT).show();
                             String user_id = mAuth.getCurrentUser().getUid();
                             DatabaseReference current_user_db = FirebaseDatabase.getInstance().getReference().child("Users").child("Lawenforcers").child(user_id);
 
@@ -106,15 +111,6 @@ public class LawenforcerSignupActivity extends AppCompatActivity {
                         }
                     }
                 });
-            }
-        });
-
-        mLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(LawenforcerSignupActivity.this, LawenforcerLoginActivity.class);
-                startActivity(intent);
-                return;
             }
         });
 
