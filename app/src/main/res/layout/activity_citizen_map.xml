@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".CitizenMapActivity" >
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".CitizenMapActivity">
 
     <fragment
     android:id="@+id/map"
@@ -12,77 +12,94 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" />
     <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_gravity="start|center"
+        android:layout_marginStart="10dp"
+        android:layout_marginBottom="100dp"
         android:id="@+id/logout"
-        android:background="@drawable/rounded_button"
-        android:textColor="@android:color/white"
-        android:layout_marginTop="10dp"
-        android:layout_marginStart="10dp"
-        android:text="logout"/>
+        android:background="@drawable/ic_arrow_back"/>
     <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
+        android:layout_width="50dp"
         android:id="@+id/settings"
-        android:background="@drawable/rounded_button"
-        android:textColor="@android:color/white"
-        android:layout_marginTop="65dp"
-        android:layout_marginStart="10dp"
-        android:text="settings"/>
+        android:layout_marginBottom="40dp"
+        android:layout_gravity="start|center"
+        android:background="@drawable/ic_settings_black"
+        android:layout_marginStart="10dp"/>
     <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:id="@+id/email"
-        android:background="@drawable/rounded_button"
-        android:textColor="@android:color/white"
-        android:layout_marginTop="120dp"
-        android:layout_marginStart="10dp"
-        android:text="email"/>
+        android:layout_marginTop="20dp"
+        android:layout_gravity="start|center"
+        android:background="@drawable/ic_email_black"
+        android:layout_marginStart="10dp"/>
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        app:cardElevation="10dp" >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+            <ImageView
+                android:id="@+id/imgExpandable"
+                android:layout_width="match_parent"
+                android:layout_height="26dp"
+                android:layout_alignParentEnd="true"
+                android:src="@drawable/ic_arrow_up_black_24dp"/>
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>
+
     <LinearLayout
+        android:layout_marginBottom="26dp"
         android:layout_gravity="bottom"
         android:background="@android:color/white"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-    <RadioGroup
-        android:id="@+id/radioGroup"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:background="@color/red"
-        android:padding="5dp"
-        tools:layout_editor_absoluteX="24dp" >
-        <RadioButton
-            android:id="@+id/police"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@android:color/white"
-            android:buttonTint="@android:color/white"
-            android:text="Police" />
-        <RadioButton
-            android:id="@+id/firefighter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:buttonTint="@android:color/white"
-            android:textColor="@android:color/white"
-            android:text="Firefighter" />
-        <RadioButton
+        <RadioGroup
+            android:id="@+id/radioGroup"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:buttonTint="@android:color/white"
-            android:textColor="@android:color/white"
-            android:text="Medic"
-            android:id="@+id/medic"/>
-    </RadioGroup>
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Call Authorities"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:textColor="@android:color/white"
+            android:orientation="horizontal"
             android:background="@color/red"
-            android:id="@+id/request"
-            android:layout_gravity="bottom" />
+            android:padding="5dp"
+            tools:layout_editor_absoluteX="24dp" >
+            <RadioButton
+                android:id="@+id/police"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/white"
+                android:buttonTint="@android:color/white"
+                android:text="Politie" />
+            <RadioButton
+                android:id="@+id/firefighter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:buttonTint="@android:color/white"
+                android:textColor="@android:color/white"
+                android:text="Pompieri" />
+            <RadioButton
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:buttonTint="@android:color/white"
+                android:textColor="@android:color/white"
+                android:text="Doctor"
+                android:id="@+id/medic"/>
+        </RadioGroup>
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="apeleaza autoritatile"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="@android:color/white"
+                android:background="@color/red"
+                android:id="@+id/request"
+                android:layout_gravity="bottom" />
     </LinearLayout>
 </FrameLayout>

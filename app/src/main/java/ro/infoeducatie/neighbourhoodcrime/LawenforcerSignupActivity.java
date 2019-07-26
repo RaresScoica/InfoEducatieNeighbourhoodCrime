@@ -78,17 +78,17 @@ public class LawenforcerSignupActivity extends AppCompatActivity {
                 final String password = mPassword.getText().toString();
 
                 if(password.length() < 6) {
-                    Toast.makeText(LawenforcerSignupActivity.this, "Password must be at least 6 characters long", Toast.LENGTH_LONG).show();
+                    Toast.makeText(LawenforcerSignupActivity.this, "Parola trebuie sa contina minimum 6 caractere", Toast.LENGTH_LONG).show();
                 }
 
                 mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(LawenforcerSignupActivity.this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(!task.isSuccessful()){
-                            Toast.makeText(LawenforcerSignupActivity.this, "Sign up error", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(LawenforcerSignupActivity.this, "Eroare la conectare", Toast.LENGTH_SHORT).show();
                         }
                         else{
-                            Toast.makeText(LawenforcerSignupActivity.this, "Registered successfully", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(LawenforcerSignupActivity.this, "Inregistrat cu succes", Toast.LENGTH_SHORT).show();
                             String user_id = mAuth.getCurrentUser().getUid();
                             DatabaseReference current_user_db = FirebaseDatabase.getInstance().getReference().child("Users").child("Lawenforcers").child(user_id);
 

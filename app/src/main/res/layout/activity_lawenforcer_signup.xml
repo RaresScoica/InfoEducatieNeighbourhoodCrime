@@ -21,7 +21,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:hint="Email"
         android:inputType="textEmailAddress"
@@ -36,9 +35,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:hint="Password"
+        android:hint="Parola"
         android:inputType="textPassword"
         android:textColor="@android:color/white"
         android:textColorHint="@android:color/white"
@@ -51,9 +49,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:hint="Name"
+        android:hint="Nume"
         android:textColor="@android:color/white"
         android:textColorHint="@android:color/white"
         app:layout_constraintEnd_toEndOf="parent"
@@ -65,7 +62,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:hint="Id"
         android:inputType="number"
@@ -81,7 +77,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
@@ -93,7 +88,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:buttonTint="@android:color/white"
-            android:text="Police"
+            android:text="Politie"
             android:textColor="@android:color/white" />
 
         <RadioButton
@@ -101,7 +96,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:buttonTint="@android:color/white"
-            android:text="Firefighter"
+            android:text="Pompieri"
             android:textColor="@android:color/white" />
 
         <RadioButton
@@ -109,7 +104,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:buttonTint="@android:color/white"
-            android:text="Medic"
+            android:text="Doctor"
             android:textColor="@android:color/white" />
     </RadioGroup>
 
@@ -118,10 +113,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:background="@drawable/rounded_button_stroke"
         android:enabled="false"
-        android:text="register"
+        android:text="creeaza cont nou"
         android:textColor="@color/gray"
         android:textSize="18sp"
         android:textStyle="bold"
@@ -134,10 +129,9 @@
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="12dp"
-        android:text="Feel free to ask any question on our e-mail adress:"
+        android:text="Ne poti adresa orice intrebare pe mail:"
         android:textColor="@android:color/white"
-        android:textSize="22sp"
+        android:textSize="20sp"
         app:layout_constraintBottom_toTopOf="@+id/email_btn"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent" />
@@ -148,7 +142,6 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="16dp"
         android:textAllCaps="false"
         android:background="@color/black"
         android:text="neighbourhoodcrime@gmail.com"

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardElevation="10dp">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:padding="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:text="Informatii si reguli de utilizare:"/>
+        <TextView
+            android:layout_marginTop="10dp"
+            android:text="Bine ati venit la aplicatia Neighbourhood Crime. Multumim pentru interesul dumneavoastra de a interveni prin a-i ajuta pe cei aflati in pericol. Cetatenii va multumesc pentru implicare. Utilizand aceata aplicatie ne ajutati sa diminuam conflictele."
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:layout_marginTop="10dp"
+            android:text="Odata intrat in aplicatie aveti responsabilitatea enorma de a ajuta orice cetatean care va solicita in cel mai scurt timp posibil. Veti primi locatia incidentului, informatii despre acesta si detalii despre identitatea cetateanului(telefon, nume, poza de profil) care va solicitat."
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:layout_marginTop="10dp"
+            android:text="In cazul in care alarma de urgenta primita este falsa sau nu se regaseste in locul semnalat de cetatean puteti identifica respectivul utilizator si chiar il puteti raporta pe mailul nostru pe care il gasiti in pagina de setari."
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:layout_marginTop="10dp"
+            android:text="De asemenea puteti informa pe oricine trimitand email direct din aplicatie."
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:layout_marginTop="10dp"
+            android:text="Sprijinim eficacitatea interventiei!"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+</android.support.v7.widget.CardView>

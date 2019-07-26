@@ -42,6 +42,6 @@ public class EmailUsActivity extends AppCompatActivity {
         intent.putExtra(Intent.EXTRA_TEXT, message);
 
         intent.setType("message/rfc822");
-        startActivity(Intent.createChooser(intent, "Choose an email client"));
+        startActivity(Intent.createChooser(intent, "Alege o aplicatie de email"));
     }
 }

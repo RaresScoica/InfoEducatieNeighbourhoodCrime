@@ -4,16 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".CitizenSettingsActivity"
+    tools:context=".LawenforcerSettingsActivity"
     android:orientation="vertical"
     android:background="@color/black"
-    android:padding="30dp">
+    android:padding="20dp">
 
     <ImageView
         android:id="@+id/profileImage"
         android:layout_width="120dp"
         android:layout_height="100dp"
-        android:layout_marginEnd="8dp"
         android:src="@drawable/ic_logo"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -24,9 +23,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:hint="Name"
+        android:hint="Nume"
         android:textColor="@android:color/white"
         android:textColorHint="@android:color/white"
         app:layout_constraintEnd_toEndOf="parent"
@@ -38,7 +36,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:hint="Id"
         android:inputType="number"
@@ -53,7 +50,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
@@ -65,7 +61,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:buttonTint="@android:color/white"
-            android:text="Police"
+            android:text="Politie"
             android:textColor="@android:color/white" />
 
         <RadioButton
@@ -73,7 +69,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:buttonTint="@android:color/white"
-            android:text="Firefighter"
+            android:text="Pompieri"
             android:textColor="@android:color/white" />
 
         <RadioButton
@@ -81,7 +77,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:buttonTint="@android:color/white"
-            android:text="Medic"
+            android:text="Doctor"
             android:textColor="@android:color/white" />
     </RadioGroup>
 
@@ -89,9 +85,9 @@
         android:id="@+id/confirm"
         android:layout_width="120dp"
         android:layout_height="120dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:background="@drawable/ic_round_btn"
-        android:text="confirm"
+        android:text="confirma"
         android:textColor="@color/gray"
         android:textSize="16sp"
         android:textStyle="bold"
@@ -102,9 +98,9 @@
         android:id="@+id/back"
         android:layout_width="120dp"
         android:layout_height="120dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:background="@drawable/ic_round_btn"
-        android:text="back"
+        android:text="inapoi"
         android:textColor="@color/gray"
         android:textSize="16sp"
         android:textStyle="bold"
@@ -115,8 +111,7 @@
         android:id="@+id/profileImageText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:text="Click on the icon above to change your profile picture"
+        android:text="Apasa pe iconita de mai sus pentru ati schimba imaginea de profil"
         android:textAlignment="center"
         android:textColor="@android:color/white"
         android:textSize="18sp"
@@ -128,10 +123,9 @@
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="12dp"
-        android:text="Feel free to ask any question on our e-mail adress:"
+        android:text="Ne poti adresa orice intrebare pe mail:"
         android:textColor="@android:color/white"
-        android:textSize="22sp"
+        android:textSize="20sp"
         app:layout_constraintBottom_toTopOf="@+id/email_btn"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent" />
@@ -142,7 +136,6 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="16dp"
         android:textAllCaps="false"
         android:background="@color/black"
         android:text="neighbourhoodcrime@gmail.com"

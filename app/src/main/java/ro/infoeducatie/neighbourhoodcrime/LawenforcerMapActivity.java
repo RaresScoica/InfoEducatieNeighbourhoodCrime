@@ -10,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -33,7 +34,6 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMapOptions;
@@ -67,19 +67,26 @@ public class LawenforcerMapActivity extends FragmentActivity implements OnMapRea
 
     private Switch mWorkingSwitch;
 
-    private String citizenId = "";
+    private String citizenId = "", description;
 
     private Boolean isLoggingOut = false;
 
     private SupportMapFragment mapFragment;
 
-    private LinearLayout mCitizenInfo, mFinish;
+    private LinearLayout mCitizenInfo, mFinish, mDescriptionInfo;
 
     private ImageView mCitizenProfileImage;
 
-    private TextView mCitizenName, mCitizenPhone;
+    private TextView mCitizenName, mCitizenPhone, mDescriptionBox;
 
     private LatLng lawenforcerLatLng;
+
+    private FirebaseAuth mAuth;
+
+    private NotificationManagerCompat notificationManager;
+
+    ImageView imgExpandable;
+    BottomSheetFragmentLawenforcer mBottomSheet;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,6 +96,8 @@ public class LawenforcerMapActivity extends FragmentActivity implements OnMapRea
 
         mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
+
+        mAuth = FirebaseAuth.getInstance();
 
         GoogleMapOptions options = new GoogleMapOptions().compassEnabled(true);
 
@@ -100,11 +109,9 @@ public class LawenforcerMapActivity extends FragmentActivity implements OnMapRea
 
         mCitizenInfo = (LinearLayout) findViewById(R.id.citizenInfo);
         mFinish = (LinearLayout) findViewById(R.id.finish);
+        mDescriptionInfo = (LinearLayout) findViewById(R.id.description_info);
 
         mCitizenProfileImage = (ImageView) findViewById(R.id.citizenProfileImage);
-
-        mCitizenName = (TextView) findViewById(R.id.citizenName);
-        mCitizenPhone = (TextView) findViewById(R.id.citizenPhone);
 
         mWorkingSwitch = (Switch) findViewById(R.id.workingSwitch);
         mWorkingSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -117,6 +124,12 @@ public class LawenforcerMapActivity extends FragmentActivity implements OnMapRea
                 }
             }
         });
+
+        mCitizenName = (TextView) findViewById(R.id.citizenName);
+        mCitizenPhone = (TextView) findViewById(R.id.citizenPhone);
+        mDescriptionBox = (TextView) findViewById(R.id.description_box);
+
+        notificationManager = NotificationManagerCompat.from(this);
 
         mEmail = (Button) findViewById(R.id.email);
         mEmail.setOnClickListener(new View.OnClickListener() {
@@ -162,6 +175,16 @@ public class LawenforcerMapActivity extends FragmentActivity implements OnMapRea
         });
 
         getAssignedCitizen();
+
+        //View
+        imgExpandable = (ImageView) findViewById(R.id.imgExpandable);
+        mBottomSheet = BottomSheetFragmentLawenforcer.newInstance("Lawenforcer bottom sheet");
+        imgExpandable.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mBottomSheet.show(getSupportFragmentManager(), mBottomSheet.getTag());
+            }
+        });
     }
 
     private void getAssignedCitizen() {
@@ -205,7 +228,7 @@ public class LawenforcerMapActivity extends FragmentActivity implements OnMapRea
                         locationLng = Double.parseDouble(map.get(1).toString());
                     }
                     LatLng requestLatLng = new LatLng(locationLat, locationLng);
-                    requestMarker = mMap.addMarker(new MarkerOptions().position(requestLatLng).title("Requested location"));
+                    requestMarker = mMap.addMarker(new MarkerOptions().position(requestLatLng).title("Locatia incidentului"));
                     getRouteToMarker(requestLatLng);
 
                     Location loc1 = new Location("");
@@ -243,6 +266,7 @@ public class LawenforcerMapActivity extends FragmentActivity implements OnMapRea
     }
 
     private void getAssignedCitizenInfo() {
+        mDescriptionInfo.setVisibility(View.VISIBLE);
         mCitizenInfo.setVisibility(View.VISIBLE);
         DatabaseReference mCitizenDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child("Citizens").child(citizenId);
         mCitizenDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -267,10 +291,28 @@ public class LawenforcerMapActivity extends FragmentActivity implements OnMapRea
 
             }
         });
+
+        DatabaseReference issueRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Citizens").child(citizenId).child("issue");
+        issueRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists() && dataSnapshot.getChildrenCount() > 0) {
+                    Map<String, Object> map2 = (Map<String, Object>) dataSnapshot.getValue();
+                    if (map2.get("description") != null) {
+                        mDescriptionBox.setText(map2.get("description").toString());
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     private void endRequest() {
-        mStatus.setText("Finish Request");
+        mStatus.setText("Finalizeaza");
         erasePolyLines();
 
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -289,6 +331,7 @@ public class LawenforcerMapActivity extends FragmentActivity implements OnMapRea
             assignedCitizenPickupLocationRef.removeEventListener(assignedCitizenPickupLocationRefListener);
         }
         mCitizenInfo.setVisibility(View.GONE);
+        mDescriptionInfo.setVisibility(View.GONE);
         mFinish.setVisibility(View.GONE);
         mCitizenName.setText("");
         mCitizenPhone.setText("");
@@ -309,9 +352,12 @@ public class LawenforcerMapActivity extends FragmentActivity implements OnMapRea
 
         mMap = googleMap;
 
-        mMap.setPadding(0,20,0,350);
+        mMap.setPadding(0,20,0,450);
         mMap.getUiSettings().isCompassEnabled();
         mMap.getUiSettings().setMapToolbarEnabled(true);
+
+        LatLng bucharest = new LatLng(44.431802, 26.102680);
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(bucharest, 11));
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
@@ -331,9 +377,9 @@ public class LawenforcerMapActivity extends FragmentActivity implements OnMapRea
 
     @Override
     public void onLocationChanged(Location location) {
-        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 11);
-        mMap.animateCamera(cameraUpdate);
+        /*LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 13);
+        mMap.animateCamera(cameraUpdate);*/
 
         if(getApplicationContext()!=null){
             mLastLocation = location;
@@ -403,7 +449,7 @@ public class LawenforcerMapActivity extends FragmentActivity implements OnMapRea
                 if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
                     mapFragment.getMapAsync(this);
                 } else {
-                    Toast.makeText(getApplicationContext(), "Please provide the permission", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Va rugam acceptati permisiunea", Toast.LENGTH_LONG).show();
                 }
                 break;
             }
@@ -436,10 +482,8 @@ public class LawenforcerMapActivity extends FragmentActivity implements OnMapRea
         }
 
         polylines = new ArrayList<>();
-        //add route(s) to the map.
         for (int i = 0; i <route.size(); i++) {
 
-            //In case of more than 5 alternative routes
             int colorIndex = i % COLORS.length;
 
             PolylineOptions polyOptions = new PolylineOptions();
@@ -449,7 +493,8 @@ public class LawenforcerMapActivity extends FragmentActivity implements OnMapRea
             Polyline polyline = mMap.addPolyline(polyOptions);
             polylines.add(polyline);
 
-            Toast.makeText(getApplicationContext(),"Route "+ (i+1) +": distance - "+ route.get(i).getDistanceValue()+": duration - "+ route.get(i).getDurationValue(),Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(),"Ruta "+ (i+1) +": distanta - " + route.get(i).getDistanceValue() + "m, durata - "+ route.get(i).getDurationValue() + "s",Toast.LENGTH_LONG).show();
+            requestMarker.setTitle("Ruta "+ (i+1) +": distanta - " + route.get(i).getDistanceValue() + "m, durata - "+ route.get(i).getDurationValue() + "s");
         }
     }
 
@@ -457,6 +502,7 @@ public class LawenforcerMapActivity extends FragmentActivity implements OnMapRea
     public void onRoutingCancelled() {
 
     }
+
     private void erasePolyLines() {
         for (Polyline line : polylines) {
             line.remove();

@@ -130,13 +130,13 @@ public class LawenforcerSettingsActivity extends AppCompatActivity {
                     if(map.get("service") != null) {
                         mService = map.get("service").toString();
                         switch (mService) {
-                            case "Police":
+                            case "Politie":
                                 mRadioGroup.check(R.id.police);
                                 break;
-                            case "Firefighter":
+                            case "Pompieri":
                                 mRadioGroup.check(R.id.firefighter);
                                 break;
-                            case "Medic":
+                            case "Doctor":
                                 mRadioGroup.check(R.id.medic);
                                 break;
                         }

@@ -27,8 +27,6 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
-        startService(new Intent(SplashActivity.this, onAppKilled.class));
-
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         mAuth = FirebaseAuth.getInstance();
         if (user != null) {
