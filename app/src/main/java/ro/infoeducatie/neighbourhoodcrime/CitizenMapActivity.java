@@ -57,7 +57,7 @@ public class CitizenMapActivity extends FragmentActivity implements OnMapReadyCa
     Location mLastLocation;
     LocationRequest mLocationRequest;
 
-    private Button mLogout, mRequest, mSettings, mEmail;
+    private Button mLogout, mRequest, mSettings, mEmail, mChat;
 
     private LatLng requestLocation;
 
@@ -186,6 +186,16 @@ public class CitizenMapActivity extends FragmentActivity implements OnMapReadyCa
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(CitizenMapActivity.this, EmailActivity.class);
+                startActivity(intent);
+                return;
+            }
+        });
+
+        mChat = findViewById(R.id.chat);
+        mChat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(CitizenMapActivity.this, MainPageActivity.class);
                 startActivity(intent);
                 return;
             }

@@ -456,6 +456,14 @@ public class LawenforcerMapActivity extends FragmentActivity implements OnMapRea
         }
     }
 
+    /*@Override
+    protected void onStop() {
+        super.onStop();
+        if (!isLoggingOut){
+            disconnectDriver();
+        }
+    }*/
+
     private List<Polyline> polylines;
     private static final int[] COLORS = new int[]{R.color.primary_dark_material_light};
 

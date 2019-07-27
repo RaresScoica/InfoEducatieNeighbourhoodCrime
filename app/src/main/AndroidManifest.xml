@@ -15,12 +15,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/NoBarTheme">
+        <activity android:name=".FindUserActivity"></activity>
+        <activity android:name=".MainPageActivity" />
         <activity android:name=".LawenforcerSignupActivity" />
         <activity android:name=".CitizenSignupActivity" />
 
-        <service android:name=".onAppKilled"
-            android:stopWithTask="false"/>
-
+        <service
+            android:name=".onAppKilled"
+            android:stopWithTask="false" />
         <service
             android:name=".Service.MyFirebaseMessagingService"
             android:stopWithTask="false">

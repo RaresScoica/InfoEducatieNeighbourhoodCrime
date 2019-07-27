@@ -22,7 +22,15 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.rengwuxian.materialedittext.MaterialEditText;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class CitizenLoginActivity extends AppCompatActivity {
 
@@ -89,7 +97,27 @@ public class CitizenLoginActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(!task.isSuccessful()){
                             Toast.makeText(CitizenLoginActivity.this, "Eroare la conectare", Toast.LENGTH_SHORT).show();
-                        }
+                        }/* else {
+                            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+                            if(user != null) {
+                                final DatabaseReference mUserDB = FirebaseDatabase.getInstance().getReference().child("Users").child("Citizens").child(user.getUid());
+                                mUserDB.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        if(!dataSnapshot.exists()) {
+                                            Map<String, Object> userMap = new HashMap<>();
+                                            userMap.put("phone", user.getPhoneNumber())
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                    }
+                                });
+                            }
+                        }*/
                     }
                 });
             }
