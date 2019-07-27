@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "730169557859-r9n1ev0nvkmlta7it8gmkvkbakl54oo1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "ro.infoeducatie.neighbourhoodcrime",
+            "certificate_hash": "71c11d536c3be383ebebda904cc3a75b49bdb08a"
+          }
+        },
+        {
           "client_id": "730169557859-mth2jvdepkqm0ls3v0b5kogftao646ln.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

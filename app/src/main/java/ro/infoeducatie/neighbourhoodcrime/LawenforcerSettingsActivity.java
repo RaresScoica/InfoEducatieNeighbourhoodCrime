@@ -15,11 +15,12 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -53,6 +54,8 @@ public class LawenforcerSettingsActivity extends AppCompatActivity {
 
     private RadioGroup mRadioGroup;
 
+    private TextView mProfileImageText;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,6 +71,8 @@ public class LawenforcerSettingsActivity extends AppCompatActivity {
         mBack = (Button) findViewById(R.id.back);
         mConfirm = (Button) findViewById(R.id.confirm);
         mEmailBtn = (Button) findViewById(R.id.email_btn);
+
+        mProfileImageText = (TextView) findViewById(R.id.profileImageText);
 
         mAuth = FirebaseAuth.getInstance();
         userID = mAuth.getCurrentUser().getUid();
@@ -125,20 +130,21 @@ public class LawenforcerSettingsActivity extends AppCompatActivity {
                     if(map.get("service") != null) {
                         mService = map.get("service").toString();
                         switch (mService) {
-                            case "Police":
+                            case "Politie":
                                 mRadioGroup.check(R.id.police);
                                 break;
-                            case "Firefighter":
+                            case "Pompieri":
                                 mRadioGroup.check(R.id.firefighter);
                                 break;
-                            case "Medic":
+                            case "Doctor":
                                 mRadioGroup.check(R.id.medic);
                                 break;
                         }
                     }
                     if(map.get("profileImageUrl") != null) {
+                        mProfileImageText.setVisibility(View.GONE);
                         mProfileImageUrl = map.get("profileImageUrl").toString();
-                        Glide.with(getApplication()).load(mProfileImageUrl).into(mProfileImage);
+                        Glide.with(getApplication()).load(mProfileImageUrl).apply(RequestOptions.circleCropTransform()).into(mProfileImage);
                     }
                 }
             }
@@ -193,12 +199,16 @@ public class LawenforcerSettingsActivity extends AppCompatActivity {
             uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    Task<Uri> downloadUrl = taskSnapshot.getStorage().getDownloadUrl();
-                    Map newImage = new HashMap();
-                    newImage.put("profileImageUrl", downloadUrl.toString());
-                    mLawenforcerDatabase.updateChildren(newImage);
-                    finish();
-                    return;
+                    taskSnapshot.getStorage().getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            Map newImage = new HashMap();
+                            newImage.put("profileImageUrl", uri.toString());
+                            mLawenforcerDatabase.updateChildren(newImage);
+                            finish();
+                            return;
+                        }
+                    });
                 }
             });
         } else {

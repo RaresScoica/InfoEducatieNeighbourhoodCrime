@@ -1,16 +1,23 @@
 package ro.infoeducatie.neighbourhoodcrime;
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.location.Location;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
@@ -25,9 +32,11 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseAuth;
@@ -48,7 +57,7 @@ public class CitizenMapActivity extends FragmentActivity implements OnMapReadyCa
     Location mLastLocation;
     LocationRequest mLocationRequest;
 
-    private Button mLogout, mRequest, mSettings, mEmail;
+    private Button mLogout, mRequest, mSettings, mEmail, mChat;
 
     private LatLng requestLocation;
 
@@ -62,13 +71,21 @@ public class CitizenMapActivity extends FragmentActivity implements OnMapReadyCa
 
     private String requestService;
 
+    public EditText mDescription;
+
+    private FirebaseAuth mAuth;
+
+    ImageView imgExpandable;
+    BottomSheetFragmentCitizen mBottomSheet;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_citizen_map);
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
+
+        GoogleMapOptions options = new GoogleMapOptions().compassEnabled(true);
 
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(CitizenMapActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_REQUEST_CODE);
@@ -94,14 +111,20 @@ public class CitizenMapActivity extends FragmentActivity implements OnMapReadyCa
             }
         });
 
+        mAuth = FirebaseAuth.getInstance();
+
+        mDescription = (EditText) findViewById(R.id.description);
+
+
         mRequest = (Button) findViewById(R.id.request);
         mRequest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(requestBol) {
                     requestBol = false;
-                    geoQuery.removeAllListeners();
-                    lawenforcerLocationRef.removeEventListener(lawenforcerLocationRefListener);
+                    String user_id = mAuth.getCurrentUser().getUid();
+                    DatabaseReference issueRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Citizens").child(user_id).child("issue");
+                    issueRef.removeValue();
 
                     if(lawenforcerFoundID != null) {
                         DatabaseReference lawenforcerRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Lawenforcers").child(lawenforcerFoundID).child("citizenRequest");
@@ -120,9 +143,11 @@ public class CitizenMapActivity extends FragmentActivity implements OnMapReadyCa
                     if(requestMarker != null) {
                         requestMarker.remove();
                     }
-                    mRequest.setText("Call Authorities");
+                    mRequest.setText("Apeleaza autoritatile");
 
                 } else {
+                    showDialogDescriptionIssue();
+
                     int selectId = mRadioGroup.getCheckedRadioButtonId();
 
                     final RadioButton radioButton = (RadioButton) findViewById(selectId);
@@ -130,6 +155,7 @@ public class CitizenMapActivity extends FragmentActivity implements OnMapReadyCa
                     if(radioButton.getText() == null) {
                         return;
                     }
+
                     requestService = radioButton.getText().toString();
 
                     requestBol = true;
@@ -140,11 +166,11 @@ public class CitizenMapActivity extends FragmentActivity implements OnMapReadyCa
                     geoFire.setLocation(userId, new GeoLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude()));
 
                     requestLocation = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
-                    requestMarker = mMap.addMarker(new MarkerOptions().position(requestLocation).title("Issue Here"));
+                    requestMarker = mMap.addMarker(new MarkerOptions().position(requestLocation).title("Problema raportata aici"));
 
-                    mRequest.setText("Searching for nearby troops...");
+                    mRequest.setText("Cautam echipaje...");
 
-                    getClosestLawenforcer();
+                    /*getClosestLawenforcer();*/
                 }
             }
         });
@@ -164,6 +190,107 @@ public class CitizenMapActivity extends FragmentActivity implements OnMapReadyCa
                 return;
             }
         });
+
+        /*mChat = findViewById(R.id.chat);
+        mChat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(CitizenMapActivity.this, MainPageActivity.class);
+                startActivity(intent);
+                return;
+            }
+        });*/
+
+        //View
+        imgExpandable = (ImageView) findViewById(R.id.imgExpandable);
+        mBottomSheet = BottomSheetFragmentCitizen.newInstance("Citizen bottom sheet");
+        imgExpandable.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mBottomSheet.show(getSupportFragmentManager(), mBottomSheet.getTag());
+            }
+        });
+    }
+
+    /*public void onButtonShowPopupWindowClick(View view) {
+        LayoutInflater inflater = (LayoutInflater)
+                getSystemService(LAYOUT_INFLATER_SERVICE);
+        View popupView = inflater.inflate(R.layout.popup_window, null);
+
+        int width = LinearLayout.LayoutParams.WRAP_CONTENT;
+        int height = LinearLayout.LayoutParams.WRAP_CONTENT;
+        boolean focusable = true;
+        final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
+
+        popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
+
+        popupView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                popupWindow.dismiss();
+                return true;
+            }
+        });
+    }*/
+
+    private void showDialogDescriptionIssue() {
+        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(CitizenMapActivity.this);
+        alertDialog.setTitle("Descriere");
+        alertDialog.setMessage("Descrie problema:");
+
+        LayoutInflater inflater = LayoutInflater.from(CitizenMapActivity.this);
+        View description_issue_layout = inflater.inflate(R.layout.layout_description_issue, null);
+
+        final EditText mDescription = (EditText) description_issue_layout.findViewById(R.id.description);
+        alertDialog.setView(description_issue_layout);
+
+        alertDialog.setPositiveButton("ADAUGA", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(final DialogInterface dialog, int which) {
+                String user_id = mAuth.getCurrentUser().getUid();
+                DatabaseReference current_user_db = FirebaseDatabase.getInstance().getReference().child("Users").child("Citizens").child(user_id).child("issue");
+
+                final String description = mDescription.getText().toString();
+
+                Map newPost = new HashMap();
+                newPost.put("description", description);
+
+                current_user_db.setValue(newPost);
+                getClosestLawenforcer();
+                dialog.dismiss();
+            }
+        });
+
+        alertDialog.setNegativeButton("INAPOI", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                requestBol = false;
+                String user_id = mAuth.getCurrentUser().getUid();
+                DatabaseReference issueRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Citizens").child(user_id).child("issue").child("description");
+                issueRef.removeValue();
+
+                if(lawenforcerFoundID != null) {
+                    DatabaseReference lawenforcerRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Lawenforcers").child(lawenforcerFoundID).child("citizenRequest");
+                    lawenforcerRef.removeValue();
+                    lawenforcerFoundID = null;
+                }
+                lawenforcerFound = false;
+                radius=1;
+
+                String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("citizenRequest");
+                GeoFire geoFire = new GeoFire(ref);
+                geoFire.removeLocation(userId);
+
+                if(requestMarker != null) {
+                    requestMarker.remove();
+                }
+                mRequest.setText("Call Authorities");
+                dialog.dismiss();
+            }
+        });
+        alertDialog.show();
     }
 
     private int radius = 1;
@@ -201,7 +328,7 @@ public class CitizenMapActivity extends FragmentActivity implements OnMapReadyCa
                                     lawenforcerRef.updateChildren(map);
 
                                     getLawenforcerLocation();
-                                    mRequest.setText("Looking for Authority Location...");
+                                    mRequest.setText("Cautam locatia echipajului...");
                                 }
                             }
                         }
@@ -272,12 +399,12 @@ public class CitizenMapActivity extends FragmentActivity implements OnMapReadyCa
                     float distance = loc1.distanceTo(loc2);
 
                     if(distance < 100) {
-                        mRequest.setText("Authority arrived at location");
+                        mRequest.setText("Echipajul a ajuns la locatie");
                     } else {
-                        mRequest.setText("Law enforcer found: " + String.valueOf(distance) + " m");
+                        mRequest.setText("Echipaj gasit " + String.valueOf(distance) + " m");
                     }
 
-                     //mLawenforcerMarker = mMap.addMarker(new MarkerOptions().position(lawenforcerLatLng).title("picked authority"));
+                    //mLawenforcerMarker = mMap.addMarker(new MarkerOptions().position(lawenforcerLatLng).title("picked authority"));
                 }
             }
 
@@ -290,7 +417,21 @@ public class CitizenMapActivity extends FragmentActivity implements OnMapReadyCa
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        try {
+            boolean success = googleMap.setMapStyle(
+                    MapStyleOptions.loadRawResourceStyle(this, R.raw.mapstyle));
+            if (!success) {
+                Log.e("MapActivity", "Style parsing failed.");
+            }
+        } catch (Resources.NotFoundException e) {
+            Log.e("MapActivity", "Can't find style. Error: ", e);
+        }
+
         mMap = googleMap;
+
+        mMap.setPadding(0,20,0,350);
+        mMap.getUiSettings().isCompassEnabled();
+        mMap.getUiSettings().setMapToolbarEnabled(true);
 
         LatLng bucharest = new LatLng(44.431802, 26.102680);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(bucharest, 11));
@@ -314,6 +455,10 @@ public class CitizenMapActivity extends FragmentActivity implements OnMapReadyCa
     @Override
     public void onLocationChanged(Location location) {
         mLastLocation = location;
+
+        /*LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 13);
+        mMap.animateCamera(cameraUpdate);*/
     }
 
     @Override
@@ -338,6 +483,7 @@ public class CitizenMapActivity extends FragmentActivity implements OnMapReadyCa
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
     }
+
     final int LOCATION_REQUEST_CODE = 1;
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -347,7 +493,7 @@ public class CitizenMapActivity extends FragmentActivity implements OnMapReadyCa
                 if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
                     mapFragment.getMapAsync(this);
                 } else {
-                    Toast.makeText(getApplicationContext(), "Please provide the permission", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Va rugam acceptati permisiunea", Toast.LENGTH_LONG).show();
                 }
                 break;
             }

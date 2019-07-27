@@ -6,13 +6,14 @@
     android:layout_height="match_parent"
     tools:context=".CitizenSettingsActivity"
     android:background="@color/black"
-    android:padding="30dp">
+    android:padding="20dp">
 
     <ImageView
         android:id="@+id/profileImage"
         android:layout_width="120dp"
         android:layout_height="100dp"
         android:src="@drawable/ic_logo"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -21,26 +22,23 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:hint="Name"
-        android:textColor="@color/gray"
-        android:textColorHint="@color/gray"
+        android:hint="Nume"
+        android:textColor="@android:color/white"
+        android:textColorHint="@android:color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/profileImage" />
 
-    <EditText
+    <TextView
         android:id="@+id/phone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:textSize="16sp"
         android:layout_marginEnd="8dp"
-        android:hint="Phone"
-        android:inputType="phone"
-        android:textColor="@color/gray"
-        android:textColorHint="@color/gray"
+        android:textColor="@android:color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/name" />
@@ -50,8 +48,9 @@
         android:layout_width="120dp"
         android:layout_height="120dp"
         android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
         android:background="@drawable/ic_round_btn"
-        android:text="confirm"
+        android:text="confirma"
         android:textColor="@color/gray"
         android:textSize="16sp"
         android:textStyle="bold"
@@ -62,9 +61,10 @@
         android:id="@+id/back"
         android:layout_width="120dp"
         android:layout_height="120dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
         android:background="@drawable/ic_round_btn"
-        android:text="back"
+        android:text="inapoi"
         android:textColor="@color/gray"
         android:textSize="16sp"
         android:textStyle="bold"
@@ -75,11 +75,24 @@
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="12dp"
-        android:text="Feel free to ask any question on our e-mail adress:"
+        android:layout_marginBottom="8dp"
+        android:text="Ne poti adresa orice intrebare pe mail:"
         android:textColor="@android:color/white"
-        android:textSize="22sp"
+        android:textSize="20sp"
         app:layout_constraintBottom_toTopOf="@+id/email_btn"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
+
+    <TextView
+        android:id="@+id/profileImageText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:text="Apasa pe iconita de mai sus pentru ati schimba imaginea de profil"
+        android:textAlignment="center"
+        android:textColor="@android:color/white"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@+id/textView"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent" />
 
@@ -89,7 +102,6 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="16dp"
         android:textAllCaps="false"
         android:background="@color/black"
         android:text="neighbourhoodcrime@gmail.com"

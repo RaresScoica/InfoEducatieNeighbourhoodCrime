@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardElevation="10dp">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:padding="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:text="Informatii si reguli de utilizare:"/>
+        <TextView
+            android:layout_marginTop="10dp"
+            android:textSize="13sp"
+            android:text="Bine ati venit la aplicatia Neighbourhood Crime. Utilizand aceata aplicatie veti fi conectat cu cel mai aproape echipaj de interventie in functie de alegerea dumneavoastra: politie, pompieri, doctor."
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:layout_marginTop="10dp"
+            android:textSize="13sp"
+            android:text="Utilizati aplicatia cu discernamant in caz de forta majora. Puteti informa rapid autoritatile despre locul in care se desfasoara evenimentul, puteti da detalii despre incident si ii puteti ajuta sa vina echipati cu tot ce le este necesar."
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:layout_marginTop="10dp"
+            android:textSize="13sp"
+            android:text="De asemenea puteti informa orice alt cetatean trimitand email direct din aplicatie."
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:layout_marginTop="10dp"
+            android:text="Veghem la linistea si relaxarea dumneavoastra!"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+</android.support.v7.widget.CardView>

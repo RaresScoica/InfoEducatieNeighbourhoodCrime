@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,7 +8,6 @@
     android:padding="30dp"
     android:background="@color/black"
     tools:context=".CitizenLoginActivity">
-
     <ImageView
         android:id="@+id/profileImage"
         android:layout_width="120dp"
@@ -17,14 +17,14 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/email"
+        android:id="@+id/phone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:hint="email"
-        android:inputType="textEmailAddress"
+        android:hint="Telefon"
+        android:inputType="phone"
         android:textColor="@android:color/white"
         android:textColorHint="@android:color/white"
         app:layout_constraintEnd_toEndOf="parent"
@@ -32,54 +32,45 @@
         app:layout_constraintTop_toBottomOf="@+id/profileImage" />
 
     <EditText
-        android:id="@+id/password"
+        android:id="@+id/code"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:hint="password"
-        android:inputType="textPassword"
+        android:hint="Introdu codul"
+        android:inputType="number"
         android:textColor="@android:color/white"
         android:textColorHint="@android:color/white"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.366"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/email" />
+        app:layout_constraintTop_toBottomOf="@+id/phone" />
 
     <Button
-        android:id="@+id/registration"
-        android:layout_width="120dp"
-        android:layout_height="120dp"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/ic_round_btn"
-        android:text="register"
+        android:id="@+id/login"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/rounded_button_stroke"
+        android:enabled="false"
+        android:text="conectare"
         android:textColor="@color/gray"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/password" />
-
-    <Button
-        android:id="@+id/login"
-        android:layout_width="120dp"
-        android:layout_height="120dp"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/ic_round_btn"
-        android:text="login"
-        android:textColor="@color/gray"
-        android:textSize="16sp"
-        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/password" />
+        app:layout_constraintTop_toBottomOf="@+id/code" />
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:text="Feel free to ask any question on our e-mail adress:"
+        android:text="Ne poti adresa orice intrebare pe mail:"
         android:textColor="@android:color/white"
-        android:textSize="22sp"
+        android:textSize="20sp"
         app:layout_constraintBottom_toTopOf="@+id/email_btn"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent" />
@@ -90,7 +81,6 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="16dp"
         android:textAllCaps="false"
         android:background="@color/black"
         android:text="neighbourhoodcrime@gmail.com"
@@ -100,5 +90,4 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"/>
-
 </android.support.constraint.ConstraintLayout>

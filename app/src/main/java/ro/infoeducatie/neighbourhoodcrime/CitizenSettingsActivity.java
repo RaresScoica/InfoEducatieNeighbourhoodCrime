@@ -6,19 +6,18 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -36,7 +35,7 @@ import java.util.Map;
 
 public class CitizenSettingsActivity extends AppCompatActivity {
 
-    private EditText mNameField, mPhoneField;
+    private EditText mNameField;
 
     private Button mBack, mConfirm, mEmailBtn;
 
@@ -46,9 +45,11 @@ public class CitizenSettingsActivity extends AppCompatActivity {
 
     private DatabaseReference mCitizenDatabase;
 
-    private String userID, mName, mPhone, mProfileImageUrl;
+    private String userID, mName, mProfileImageUrl;
 
     private Uri resultUri;
+
+    private TextView mProfileImageText, mPhone;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,13 +57,15 @@ public class CitizenSettingsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_citizen_settings);
 
         mNameField = (EditText) findViewById(R.id.name);
-        mPhoneField = (EditText) findViewById(R.id.phone);
 
         mProfileImage = (ImageView) findViewById(R.id.profileImage);
 
         mBack = (Button) findViewById(R.id.back);
         mConfirm = (Button) findViewById(R.id.confirm);
         mEmailBtn = (Button) findViewById(R.id.email_btn);
+
+        mProfileImageText = (TextView) findViewById(R.id.profileImageText);
+        mPhone = (TextView) findViewById(R.id.phone);
 
         mAuth = FirebaseAuth.getInstance();
         userID = mAuth.getCurrentUser().getUid();
@@ -114,12 +117,12 @@ public class CitizenSettingsActivity extends AppCompatActivity {
                         mNameField.setText(mName);
                     }
                     if(map.get("phone") != null) {
-                        mPhone = map.get("phone").toString();
-                        mPhoneField.setText(mPhone);
+                        mPhone.setText(map.get("phone").toString());
                     }
                     if(map.get("profileImageUrl") != null) {
+                        mProfileImageText.setVisibility(View.GONE);
                         mProfileImageUrl = map.get("profileImageUrl").toString();
-                        Glide.with(getApplication()).load(mProfileImageUrl).into(mProfileImage);
+                        Glide.with(getApplication()).load(mProfileImageUrl).apply(RequestOptions.circleCropTransform()).into(mProfileImage);
                     }
                 }
             }
@@ -133,11 +136,9 @@ public class CitizenSettingsActivity extends AppCompatActivity {
 
     private void saveUserInformation() {
         mName = mNameField.getText().toString();
-        mPhone = mPhoneField.getText().toString();
 
         Map userInfo = new HashMap();
         userInfo.put("name", mName);
-        userInfo.put("phone", mPhone);
         mCitizenDatabase.updateChildren(userInfo);
 
         if(resultUri != null) {
@@ -163,12 +164,16 @@ public class CitizenSettingsActivity extends AppCompatActivity {
             uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    Task<Uri> downloadUrl = taskSnapshot.getStorage().getDownloadUrl();
-                    Map newImage = new HashMap();
-                    newImage.put("profileImageUrl", downloadUrl.toString());
-                    mCitizenDatabase.updateChildren(newImage);
-                    finish();
-                    return;
+                    taskSnapshot.getStorage().getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            Map newImage = new HashMap();
+                            newImage.put("profileImageUrl", uri.toString());
+                            mCitizenDatabase.updateChildren(newImage);
+                            finish();
+                            return;
+                        }
+                    });
                 }
             });
         } else {
@@ -177,7 +182,7 @@ public class CitizenSettingsActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == 1 && resultCode == Activity.RESULT_OK) {
             final Uri imageUri = data.getData();
