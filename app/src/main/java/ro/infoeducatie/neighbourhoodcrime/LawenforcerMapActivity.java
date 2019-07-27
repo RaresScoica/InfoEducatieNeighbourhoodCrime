@@ -352,7 +352,7 @@ public class LawenforcerMapActivity extends FragmentActivity implements OnMapRea
 
         mMap = googleMap;
 
-        mMap.setPadding(0,20,0,450);
+        mMap.setPadding(0,20,0,620);
         mMap.getUiSettings().isCompassEnabled();
         mMap.getUiSettings().setMapToolbarEnabled(true);
 
