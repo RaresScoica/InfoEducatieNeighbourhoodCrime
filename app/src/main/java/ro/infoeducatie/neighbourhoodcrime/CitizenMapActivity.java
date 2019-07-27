@@ -191,7 +191,7 @@ public class CitizenMapActivity extends FragmentActivity implements OnMapReadyCa
             }
         });
 
-        mChat = findViewById(R.id.chat);
+        /*mChat = findViewById(R.id.chat);
         mChat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -199,7 +199,7 @@ public class CitizenMapActivity extends FragmentActivity implements OnMapReadyCa
                 startActivity(intent);
                 return;
             }
-        });
+        });*/
 
         //View
         imgExpandable = (ImageView) findViewById(R.id.imgExpandable);
@@ -328,7 +328,7 @@ public class CitizenMapActivity extends FragmentActivity implements OnMapReadyCa
                                     lawenforcerRef.updateChildren(map);
 
                                     getLawenforcerLocation();
-                                    mRequest.setText("Looking for Authority location...");
+                                    mRequest.setText("Cautam locatia echipajului...");
                                 }
                             }
                         }

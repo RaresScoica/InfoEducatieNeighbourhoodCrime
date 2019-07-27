@@ -18,7 +18,6 @@
         <activity android:name=".FindUserActivity"></activity>
         <activity android:name=".MainPageActivity" />
         <activity android:name=".LawenforcerSignupActivity" />
-        <activity android:name=".CitizenSignupActivity" />
 
         <service
             android:name=".onAppKilled"

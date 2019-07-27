@@ -13,20 +13,23 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="18sp"
+            android:textSize="16sp"
             android:text="Informatii si reguli de utilizare:"/>
         <TextView
             android:layout_marginTop="10dp"
+            android:textSize="13sp"
             android:text="Bine ati venit la aplicatia Neighbourhood Crime. Utilizand aceata aplicatie veti fi conectat cu cel mai aproape echipaj de interventie in functie de alegerea dumneavoastra: politie, pompieri, doctor."
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <TextView
             android:layout_marginTop="10dp"
+            android:textSize="13sp"
             android:text="Utilizati aplicatia cu discernamant in caz de forta majora. Puteti informa rapid autoritatile despre locul in care se desfasoara evenimentul, puteti da detalii despre incident si ii puteti ajuta sa vina echipati cu tot ce le este necesar."
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <TextView
             android:layout_marginTop="10dp"
+            android:textSize="13sp"
             android:text="De asemenea puteti informa orice alt cetatean trimitand email direct din aplicatie."
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />

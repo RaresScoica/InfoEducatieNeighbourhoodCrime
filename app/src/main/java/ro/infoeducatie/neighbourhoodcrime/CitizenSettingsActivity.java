@@ -35,7 +35,7 @@ import java.util.Map;
 
 public class CitizenSettingsActivity extends AppCompatActivity {
 
-    private EditText mNameField, mPhoneField;
+    private EditText mNameField;
 
     private Button mBack, mConfirm, mEmailBtn;
 
@@ -45,11 +45,11 @@ public class CitizenSettingsActivity extends AppCompatActivity {
 
     private DatabaseReference mCitizenDatabase;
 
-    private String userID, mName, mPhone, mProfileImageUrl;
+    private String userID, mName, mProfileImageUrl;
 
     private Uri resultUri;
 
-    private TextView mProfileImageText;
+    private TextView mProfileImageText, mPhone;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +57,6 @@ public class CitizenSettingsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_citizen_settings);
 
         mNameField = (EditText) findViewById(R.id.name);
-        mPhoneField = (EditText) findViewById(R.id.phone);
 
         mProfileImage = (ImageView) findViewById(R.id.profileImage);
 
@@ -66,6 +65,7 @@ public class CitizenSettingsActivity extends AppCompatActivity {
         mEmailBtn = (Button) findViewById(R.id.email_btn);
 
         mProfileImageText = (TextView) findViewById(R.id.profileImageText);
+        mPhone = (TextView) findViewById(R.id.phone);
 
         mAuth = FirebaseAuth.getInstance();
         userID = mAuth.getCurrentUser().getUid();
@@ -117,8 +117,7 @@ public class CitizenSettingsActivity extends AppCompatActivity {
                         mNameField.setText(mName);
                     }
                     if(map.get("phone") != null) {
-                        mPhone = map.get("phone").toString();
-                        mPhoneField.setText(mPhone);
+                        mPhone.setText(map.get("phone").toString());
                     }
                     if(map.get("profileImageUrl") != null) {
                         mProfileImageText.setVisibility(View.GONE);
@@ -137,11 +136,9 @@ public class CitizenSettingsActivity extends AppCompatActivity {
 
     private void saveUserInformation() {
         mName = mNameField.getText().toString();
-        mPhone = mPhoneField.getText().toString();
 
         Map userInfo = new HashMap();
         userInfo.put("name", mName);
-        userInfo.put("phone", mPhone);
         mCitizenDatabase.updateChildren(userInfo);
 
         if(resultUri != null) {
