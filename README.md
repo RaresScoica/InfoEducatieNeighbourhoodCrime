@@ -1,7 +1,6 @@
 # Neighbourhood Crime
 
- O aplicatie folosita in situatii de urgenta. Foarte utila in fata apelului la 112 care deseori conversatia facuta prin intermediul telefonului dintre operator si civil aflat in pericol este irelevanta sau cei doi nu se inteleg clar. Asadar, aceasta aplicatie foloseste o metoda simpla prin explicarea problemei intr-un mod rapid si un mod si mai rapid prin care utilizatorul poate chema diferite servicii de ajutor in locul sau actual,serviciile sunt: serviciul de politie, serviciul de ambulanta si
- cel de pompieri.
+Principalul scop al aplicatiei este prevenirea situatiilor de urgenta in timp util. Proiectul propune solutia de a chema anumite servicii de 112 cum ar fi: politie, pompieri , doctor. De ce aceasta aplicatie este mai buna decat un simplu apel la 112? In primul rand, apelul la urgente necesita o conversatie cu un operator care cere multe detalii care pot fi derutante si deseori se pierde foarte mult timp inaintea chemarii de ajutoare. Astfel, prin proiectul nostru intitulat Neigbourhood Crime tintim un public numeros care are nevoie de ajutor in scurt timp. Cel mai important lucru este acela de micsorare a procentajului de victime provocate, in opinia noastra, de acest timp pierdut apeland si vorbind la telefon cu operatori.
  
  ## Permisiuni in aplicatie:
 
