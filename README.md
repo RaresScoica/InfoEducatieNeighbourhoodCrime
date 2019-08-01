@@ -1,9 +1,7 @@
-# InfoEducatieNeighbourhoodCrime
+# Neighbourhood Crime
 
- O aplicatie folosita in situatii de urgenta. Foarte utila in fata apelului la 112 care deseori conversatia facuta prin intermediul telefonului dintre operator si civil
- aflat in pericol este irelevanta sau cei doi nu se inteleg clar. Asadar, aceasta aplicatie foloseste o metoda simpla prin explicarea problemei
- intr-un mod rapid si un mod si mai rapid prin care utilizatorul poate chema diferite servicii de ajutor in locul sau actual,serviciile sunt:(serviciul de politie,serviciul de ambulanta si
- cel de pompier.
+ O aplicatie folosita in situatii de urgenta. Foarte utila in fata apelului la 112 care deseori conversatia facuta prin intermediul telefonului dintre operator si civil aflat in pericol este irelevanta sau cei doi nu se inteleg clar. Asadar, aceasta aplicatie foloseste o metoda simpla prin explicarea problemei intr-un mod rapid si un mod si mai rapid prin care utilizatorul poate chema diferite servicii de ajutor in locul sau actual,serviciile sunt: serviciul de politie, serviciul de ambulanta si
+ cel de pompieri.
  
  ## Permisiuni in aplicatie:
 
@@ -12,9 +10,30 @@
 Localizarea telefonului trebuie permisa pentru a putea efectua solicitari autoritatilor
 ```
 
+ ## Reguli de utilizare pentru contul de cetatean:
+ 
+ Bine ati venit la aplicatia Neighbourhood Crime. Utilizand aceata aplicatie veti fi conectat cu cel mai aproape echipaj de interventie in functie de alegerea dumneavoastra: politie, pompieri, doctor.
+Utilizati aplicatia cu discernamant in caz de forta majora. Puteti informa rapid autoritatile despre locul in care se desfasoara evenimentul, puteti da detalii despre incident si ii puteti ajuta sa vina echipati cu tot ce le este necesar.
+De asemenea puteti informa orice alt cetatean trimitand email direct din aplicatie.
+
+
+**Comunitati mai sigure impreuna**
+
+## Reguli de utilizare pentru contul de autoritate:
+
+Bine ati venit la aplicatia Neighbourhood Crime. Multumim pentru interesul dumneavoastra de a interveni prin a-i ajuta pe cei aflati in pericol. Cetatenii va multumesc pentru implicare. Utilizand aceata aplicatie ne ajutati sa diminuam conflictele.
+Odata ce bifati butonul de primire solicitari care se regaseste in partea de sus a hartii aveti responsabilitatea enorma de a ajuta orice cetatean care va solicita in cel mai scurt timp posibil. Astfel aveti posibilitatea de a alege daca doriti sau nu sa fiti disponibil in acel moment. Veti primi locatia incidentului, informatii despre acesta si detalii despre identitatea cetateanului(telefon, nume, poza de profil) care va solicitat.
+In cazul in care alarma de urgenta primita este falsa sau nu se regaseste in locul semnalat de cetatean puteti identifica respectivul utilizator si chiar il puteti raporta pe emailul nostru pe care il gasiti in pagina de setari.
+De asemenea puteti informa pe oricine trimitand email direct din aplicatie.
+Inainte de a iesi din aplicatie nu uiati sa debifati butonul de primire solicitari daca doriti sa nu mai fiti apelat. Va multumim.
+
+
+**Sprijinim eficacitatea interventiei!**
+ 
+
 ## ACTIVITATILE SI CUM FUNCTIONEAZA ELE :
 
-ACESTA ESTE ECRANUL DE INCEPUT (SPLASH SCREEN) CARE FACE LEGATURA CU RESTUL ACTIVITATILOR :
+ACESTA ESTE ACTIVITATEA IN CARE SE INCARAC CELELALTE ACTIVITATI(SPLASH SCREEN):
 
 
 ![62c0e21c-640d-4f23-8bdb-46e39e1f82cd](https://user-images.githubusercontent.com/51022230/62231498-d634de00-b3cc-11e9-980f-dd437b8fcafc.jpg)
