@@ -126,12 +126,12 @@ Librarii folosite(github):
 -rengwuxian( material edit text ),(design)
 
 
-## Autori
+## AUTORI
 **Dumitru Mihnea** 
 si
 **Goiceanu Rares**
 
-## UN PREVIEW IN MARE AL APLICATIEI 
+##### UN PREVIEW IN MARE AL APLICATIEI 
 
 ![POZA DE ADAUGAT9](https://user-images.githubusercontent.com/51022230/62249154-72251080-b3f2-11e9-91e2-45992c309fda.jpg)
 ![POZA DE ADAUGAT6](https://user-images.githubusercontent.com/51022230/62249150-72251080-b3f2-11e9-9601-60dc1541ef5c.jpg)
