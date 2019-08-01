@@ -1,16 +1,20 @@
 package ro.infoeducatie.neighbourhoodcrime;
 
 import android.Manifest;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.location.Location;
+import android.os.Build;
+import android.os.Looper;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.app.NotificationManagerCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -30,10 +34,12 @@ import com.directions.route.Routing;
 import com.directions.route.RoutingListener;
 import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMapOptions;
@@ -45,6 +51,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -56,18 +63,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class LawenforcerMapActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener, RoutingListener {
+public class LawenforcerMapActivity extends FragmentActivity implements OnMapReadyCallback, RoutingListener {
 
     private GoogleMap mMap;
-    GoogleApiClient mGoogleApiClient;
     Location mLastLocation;
     LocationRequest mLocationRequest;
+
+    private FusedLocationProviderClient mFusedLocationClient;
 
     private Button mLogout, mSettings, mStatus, mEmail;
 
     private Switch mWorkingSwitch;
 
-    private String citizenId = "", description;
+    private String citizenId = "";
 
     private Boolean isLoggingOut = false;
 
@@ -101,19 +109,17 @@ public class LawenforcerMapActivity extends FragmentActivity implements OnMapRea
 
         GoogleMapOptions options = new GoogleMapOptions().compassEnabled(true);
 
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(LawenforcerMapActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_REQUEST_CODE);
-        } else {
-            mapFragment.getMapAsync(this);
-        }
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
-        mCitizenInfo = (LinearLayout) findViewById(R.id.citizenInfo);
-        mFinish = (LinearLayout) findViewById(R.id.finish);
-        mDescriptionInfo = (LinearLayout) findViewById(R.id.description_info);
+        mapFragment.getMapAsync(this);
 
-        mCitizenProfileImage = (ImageView) findViewById(R.id.citizenProfileImage);
+        mCitizenInfo = findViewById(R.id.citizenInfo);
+        mFinish = findViewById(R.id.finish);
+        mDescriptionInfo = findViewById(R.id.description_info);
 
-        mWorkingSwitch = (Switch) findViewById(R.id.workingSwitch);
+        mCitizenProfileImage = findViewById(R.id.citizenProfileImage);
+
+        mWorkingSwitch = findViewById(R.id.workingSwitch);
         mWorkingSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -125,13 +131,13 @@ public class LawenforcerMapActivity extends FragmentActivity implements OnMapRea
             }
         });
 
-        mCitizenName = (TextView) findViewById(R.id.citizenName);
-        mCitizenPhone = (TextView) findViewById(R.id.citizenPhone);
-        mDescriptionBox = (TextView) findViewById(R.id.description_box);
+        mCitizenName = findViewById(R.id.citizenName);
+        mCitizenPhone = findViewById(R.id.citizenPhone);
+        mDescriptionBox = findViewById(R.id.description_box);
 
         notificationManager = NotificationManagerCompat.from(this);
 
-        mEmail = (Button) findViewById(R.id.email);
+        mEmail = findViewById(R.id.email);
         mEmail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -141,7 +147,7 @@ public class LawenforcerMapActivity extends FragmentActivity implements OnMapRea
             }
         });
 
-        mSettings = (Button) findViewById(R.id.settings);
+        mSettings = findViewById(R.id.settings);
         mSettings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -151,7 +157,7 @@ public class LawenforcerMapActivity extends FragmentActivity implements OnMapRea
             }
         });
 
-        mLogout = (Button) findViewById(R.id.logout);
+        mLogout = findViewById(R.id.logout);
         mLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -166,7 +172,7 @@ public class LawenforcerMapActivity extends FragmentActivity implements OnMapRea
             }
         });
 
-        mStatus = (Button) findViewById(R.id.status);
+        mStatus = findViewById(R.id.status);
         mStatus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -177,7 +183,7 @@ public class LawenforcerMapActivity extends FragmentActivity implements OnMapRea
         getAssignedCitizen();
 
         //View
-        imgExpandable = (ImageView) findViewById(R.id.imgExpandable);
+        imgExpandable = findViewById(R.id.imgExpandable);
         mBottomSheet = BottomSheetFragmentLawenforcer.newInstance("Lawenforcer bottom sheet");
         imgExpandable.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -352,108 +358,124 @@ public class LawenforcerMapActivity extends FragmentActivity implements OnMapRea
 
         mMap = googleMap;
 
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(1000);
+        mLocationRequest.setFastestInterval(1000);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)  {
+                mMap.setMyLocationEnabled(true);
+            } else {
+                checkLocationPermission();
+            }
+        }
+
         mMap.setPadding(0,20,0,620);
         mMap.getUiSettings().isCompassEnabled();
         mMap.getUiSettings().setMapToolbarEnabled(true);
 
-        LatLng bucharest = new LatLng(44.431802, 26.102680);
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(bucharest, 11));
+        mFusedLocationClient.getLastLocation()
+                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        if (location != null) {
+                            LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 13);
+                            mMap.animateCamera(cameraUpdate);
+                        }
+                    }
+                });
+    }
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
+    LocationCallback mLocationCallback = new LocationCallback() {
+        @Override
+        public void onLocationResult(LocationResult locationResult) {
+            for(Location location : locationResult.getLocations()) {
+                if(getApplicationContext()!=null){
+                    mLastLocation = location;
+
+                    /*LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                    CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 13);
+                    mMap.animateCamera(cameraUpdate);*/
+
+                    lawenforcerLatLng = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+
+                    String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                    DatabaseReference refAvailable = FirebaseDatabase.getInstance().getReference("lawenforcersAvailable");
+                    DatabaseReference refWorking = FirebaseDatabase.getInstance().getReference("lawenforcersWorking");
+                    GeoFire geoFireAvailable = new GeoFire(refAvailable);
+                    GeoFire geoFireWorking = new GeoFire(refWorking);
+
+                    switch(citizenId) {
+                        case "":
+                            geoFireWorking.removeLocation(userId);
+                            geoFireAvailable.setLocation(userId, new GeoLocation(location.getLatitude(), location.getLongitude()));
+                            break;
+
+                        default:
+                            geoFireAvailable.removeLocation(userId);
+                            geoFireWorking.setLocation(userId, new GeoLocation(location.getLatitude(), location.getLongitude()));
+                            break;
+                    }
+                }
+            }
         }
-        buildGoogleApiClient();
-        mMap.setMyLocationEnabled(true);
-    }
+    };
 
-    protected synchronized  void buildGoogleApiClient() {
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
-        mGoogleApiClient.connect();
-    }
-
-    @Override
-    public void onLocationChanged(Location location) {
-        /*LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 13);
-        mMap.animateCamera(cameraUpdate);*/
-
-        if(getApplicationContext()!=null){
-            mLastLocation = location;
-
-            lawenforcerLatLng = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
-
-            String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-            DatabaseReference refAvailable = FirebaseDatabase.getInstance().getReference("lawenforcersAvailable");
-            DatabaseReference refWorking = FirebaseDatabase.getInstance().getReference("lawenforcersWorking");
-            GeoFire geoFireAvailable = new GeoFire(refAvailable);
-            GeoFire geoFireWorking = new GeoFire(refWorking);
-
-            switch(citizenId) {
-                case "":
-                    geoFireWorking.removeLocation(userId);
-                    geoFireAvailable.setLocation(userId, new GeoLocation(location.getLatitude(), location.getLongitude()));
-                    break;
-
-                default:
-                    geoFireAvailable.removeLocation(userId);
-                    geoFireWorking.setLocation(userId, new GeoLocation(location.getLatitude(), location.getLongitude()));
-                    break;
+    private void checkLocationPermission() {
+        if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)  {
+            if(ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
+                new AlertDialog.Builder(this)
+                        .setTitle("Give Permission")
+                        .setMessage("Please allow the permission")
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                ActivityCompat.requestPermissions(LawenforcerMapActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+                            }
+                        })
+                .create()
+                .show();
+            } else {
+                ActivityCompat.requestPermissions(LawenforcerMapActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
             }
         }
     }
 
     @Override
-    public void onConnected(@Nullable Bundle bundle) {
-        mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(1000);
-        mLocationRequest.setFastestInterval(1000);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-
-    }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
-    }
-
-    private void connectLawenforcer() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(LawenforcerMapActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_REQUEST_CODE);
-        }
-        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
-    }
-
-    private void disconnectLawenforcer() {
-        LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
-        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("lawenforcersAvailable");
-
-        GeoFire geoFire = new GeoFire(ref);
-        geoFire.removeLocation(userId);
-    }
-
-    final int LOCATION_REQUEST_CODE = 1;
-    @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
-            case LOCATION_REQUEST_CODE: {
+            case 1: {
                 if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                    mapFragment.getMapAsync(this);
+                    if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                        mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
+                        mMap.setMyLocationEnabled(true);
+                    }
                 } else {
                     Toast.makeText(getApplicationContext(), "Va rugam acceptati permisiunea", Toast.LENGTH_LONG).show();
                 }
                 break;
             }
         }
+    }
+
+    private void connectLawenforcer() {
+        checkLocationPermission();
+        mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
+        mMap.setMyLocationEnabled(true);
+    }
+
+    private void disconnectLawenforcer() {
+        if(mFusedLocationClient != null) {
+            mFusedLocationClient.removeLocationUpdates(mLocationCallback);
+        }
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("lawenforcersAvailable");
+
+        GeoFire geoFire = new GeoFire(ref);
+        geoFire.removeLocation(userId);
     }
 
     /*@Override

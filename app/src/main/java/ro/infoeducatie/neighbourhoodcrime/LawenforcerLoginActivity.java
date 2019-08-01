@@ -55,12 +55,12 @@ public class LawenforcerLoginActivity extends AppCompatActivity {
             }
         };
 
-        mEmail = (EditText) findViewById(R.id.email);
-        mPassword = (EditText) findViewById(R.id.password);
+        mEmail = findViewById(R.id.email);
+        mPassword = findViewById(R.id.password);
 
-        mLogin = (Button) findViewById(R.id.login);
-        mRegistration = (Button) findViewById(R.id.registration);
-        mEmailBtn = (Button) findViewById(R.id.email_btn);
+        mLogin = findViewById(R.id.login);
+        mRegistration = findViewById(R.id.registration);
+        mEmailBtn = findViewById(R.id.email_btn);
 
         mEmail.addTextChangedListener(loginTextWatcher);
         mPassword.addTextChangedListener(loginTextWatcher);
@@ -104,7 +104,7 @@ public class LawenforcerLoginActivity extends AppCompatActivity {
             }
         });
 
-        mForgotPassword = (TextView) findViewById(R.id.forgot_password);
+        mForgotPassword = findViewById(R.id.forgot_password);
         mForgotPassword.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -122,7 +122,7 @@ public class LawenforcerLoginActivity extends AppCompatActivity {
         LayoutInflater inflater = LayoutInflater.from(LawenforcerLoginActivity.this);
         View forgot_password_layout = inflater.inflate(R.layout.layout_forgot_password, null);
 
-        final MaterialEditText edtEmail = (MaterialEditText) forgot_password_layout.findViewById(R.id.edtEmail);
+        final MaterialEditText edtEmail = forgot_password_layout.findViewById(R.id.edtEmail);
         alertDialog.setView(forgot_password_layout);
 
         alertDialog.setPositiveButton("RESET", new DialogInterface.OnClickListener() {
