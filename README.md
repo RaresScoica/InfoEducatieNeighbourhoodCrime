@@ -33,13 +33,15 @@ Inainte de a iesi din aplicatie nu uiati sa debifati butonul de primire solicita
 
 ## ACTIVITATILE SI CUM FUNCTIONEAZA ELE :
 
+```
 ACESTA ESTE ACTIVITATEA IN CARE SE INCARAC CELELALTE ACTIVITATI(SPLASH SCREEN):
+```
 
+![pOZA](https://user-images.githubusercontent.com/51022230/62231498-d634de00-b3cc-11e9-980f-dd437b8fcafc.jpg)
 
-![62c0e21c-640d-4f23-8bdb-46e39e1f82cd](https://user-images.githubusercontent.com/51022230/62231498-d634de00-b3cc-11e9-980f-dd437b8fcafc.jpg)
-
-ACESTA ESTE PARTEA DE ALEGERE DINTRE CETATEAN SI AUTORITATE:
-
+```
+ACESTA ESTE ACTIVITATEA IN CARE UTILIZATORII ISI POT ALEGE TIPUL DE CONT: CETATEAN SAU AUTORITATE:
+```
 
 ![POZA DE ADAUGAT9](https://user-images.githubusercontent.com/51022230/62235826-6d526380-b3d6-11e9-9b20-4779099a0ced.jpg)
 ```
