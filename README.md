@@ -1,15 +1,15 @@
 # InfoEducatieNeighbourhoodCrime
 
- O aplicatie folosita in situatii de urgenta.Foarte utila in fata apelului la 112 care deseori conversatia facuta prin intermediul telefonului dintre operator si civil
- aflat in pericol este irelevanta sau cei doi nu se inteleg clar.Asadar, aceasta aplicatie foloseste o metoda simpla prin explicarea problemei
+ O aplicatie folosita in situatii de urgenta. Foarte utila in fata apelului la 112 care deseori conversatia facuta prin intermediul telefonului dintre operator si civil
+ aflat in pericol este irelevanta sau cei doi nu se inteleg clar. Asadar, aceasta aplicatie foloseste o metoda simpla prin explicarea problemei
  intr-un mod rapid si un mod si mai rapid prin care utilizatorul poate chema diferite servicii de ajutor in locul sau actual,serviciile sunt:(serviciul de politie,serviciul de ambulanta si
  cel de pompier.
  
- ## Cerinte pentru utilizarea aplicatiei in mod corect :
+ ## Permisiuni in aplicatie:
 
 
 ```
-LOCALIZAREA trebuie sa fie pornita ACCESUL la CONTACTE si DATE trebuie permis pentru ca DATELE sa fie prelucrate asfel incat aplicatia sa functioneze CORECT  
+Localizarea telefonului trebuie permisa pentru a putea efectua solicitari autoritatilor
 ```
 
 ## ACTIVITATILE SI CUM FUNCTIONEAZA ELE :
