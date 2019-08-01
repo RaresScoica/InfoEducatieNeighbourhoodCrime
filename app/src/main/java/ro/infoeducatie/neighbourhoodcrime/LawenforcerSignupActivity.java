@@ -58,18 +58,18 @@ public class LawenforcerSignupActivity extends AppCompatActivity {
             }
         };
 
-        mEmail = (EditText) findViewById(R.id.email);
-        mPassword = (EditText) findViewById(R.id.password);
-        mName = (EditText) findViewById(R.id.name);
-        mId = (EditText) findViewById(R.id.id);
+        mEmail = findViewById(R.id.email);
+        mPassword = findViewById(R.id.password);
+        mName = findViewById(R.id.name);
+        mId = findViewById(R.id.id);
 
-        mRegistration = (Button) findViewById(R.id.registration);
-        mEmailBtn = (Button) findViewById(R.id.email_btn);
+        mRegistration = findViewById(R.id.registration);
+        mEmailBtn = findViewById(R.id.email_btn);
 
         mEmail.addTextChangedListener(loginTextWatcher);
         mPassword.addTextChangedListener(loginTextWatcher);
 
-        mRadioGroup = (RadioGroup) findViewById(R.id.radioGroup);
+        mRadioGroup = findViewById(R.id.radioGroup);
 
         mRegistration.setOnClickListener(new View.OnClickListener() {
             @Override

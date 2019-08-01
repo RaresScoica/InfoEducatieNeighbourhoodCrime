@@ -56,16 +56,16 @@ public class CitizenSettingsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_citizen_settings);
 
-        mNameField = (EditText) findViewById(R.id.name);
+        mNameField = findViewById(R.id.name);
 
-        mProfileImage = (ImageView) findViewById(R.id.profileImage);
+        mProfileImage = findViewById(R.id.profileImage);
 
-        mBack = (Button) findViewById(R.id.back);
-        mConfirm = (Button) findViewById(R.id.confirm);
-        mEmailBtn = (Button) findViewById(R.id.email_btn);
+        mBack = findViewById(R.id.back);
+        mConfirm = findViewById(R.id.confirm);
+        mEmailBtn = findViewById(R.id.email_btn);
 
-        mProfileImageText = (TextView) findViewById(R.id.profileImageText);
-        mPhone = (TextView) findViewById(R.id.phone);
+        mProfileImageText = findViewById(R.id.profileImageText);
+        mPhone = findViewById(R.id.phone);
 
         mAuth = FirebaseAuth.getInstance();
         userID = mAuth.getCurrentUser().getUid();

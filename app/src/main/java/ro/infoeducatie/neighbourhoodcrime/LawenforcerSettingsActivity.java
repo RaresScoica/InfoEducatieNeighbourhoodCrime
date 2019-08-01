@@ -61,18 +61,18 @@ public class LawenforcerSettingsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lawenforcer_settings);
 
-        mNameField = (EditText) findViewById(R.id.name);
-        mPhoneField = (EditText) findViewById(R.id.phone);
+        mNameField = findViewById(R.id.name);
+        mPhoneField = findViewById(R.id.phone);
 
-        mProfileImage = (ImageView) findViewById(R.id.profileImage);
+        mProfileImage = findViewById(R.id.profileImage);
 
-        mRadioGroup = (RadioGroup) findViewById(R.id.radioGroup);
+        mRadioGroup = findViewById(R.id.radioGroup);
 
-        mBack = (Button) findViewById(R.id.back);
-        mConfirm = (Button) findViewById(R.id.confirm);
-        mEmailBtn = (Button) findViewById(R.id.email_btn);
+        mBack = findViewById(R.id.back);
+        mConfirm = findViewById(R.id.confirm);
+        mEmailBtn = findViewById(R.id.email_btn);
 
-        mProfileImageText = (TextView) findViewById(R.id.profileImageText);
+        mProfileImageText = findViewById(R.id.profileImageText);
 
         mAuth = FirebaseAuth.getInstance();
         userID = mAuth.getCurrentUser().getUid();
@@ -162,7 +162,7 @@ public class LawenforcerSettingsActivity extends AppCompatActivity {
 
         int selectId = mRadioGroup.getCheckedRadioButtonId();
 
-        final RadioButton radioButton = (RadioButton) findViewById(selectId);
+        final RadioButton radioButton = findViewById(selectId);
 
         if(radioButton.getText() == null) {
             return;

@@ -6,8 +6,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
-import com.rengwuxian.materialedittext.MaterialEditText;
-
 public class MainActivity extends AppCompatActivity {
 
     private Button mCitizen, mLawenforcer;
@@ -17,8 +15,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mCitizen = (Button) findViewById(R.id.citizen);
-        mLawenforcer = (Button) findViewById(R.id.lawenforcer);
+        mCitizen = findViewById(R.id.citizen);
+        mLawenforcer = findViewById(R.id.lawenforcer);
 
         startService(new Intent(MainActivity.this, onAppKilled.class));
 

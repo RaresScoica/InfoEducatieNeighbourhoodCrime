@@ -6,11 +6,13 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.location.Location;
+import android.os.Build;
+import android.os.Looper;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -26,10 +28,12 @@ import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
 import com.firebase.geofire.GeoQuery;
 import com.firebase.geofire.GeoQueryEventListener;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMapOptions;
@@ -39,6 +43,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -50,12 +55,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class CitizenMapActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
+public class CitizenMapActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
-    GoogleApiClient mGoogleApiClient;
     Location mLastLocation;
     LocationRequest mLocationRequest;
+
+    private FusedLocationProviderClient mFusedLocationClient;
 
     private Button mLogout, mRequest, mSettings, mEmail, mChat;
 
@@ -87,19 +93,17 @@ public class CitizenMapActivity extends FragmentActivity implements OnMapReadyCa
 
         GoogleMapOptions options = new GoogleMapOptions().compassEnabled(true);
 
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(CitizenMapActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_REQUEST_CODE);
-        } else {
-            mapFragment.getMapAsync(this);
-        }
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
-        mSettings = (Button) findViewById(R.id.settings);
-        mEmail = (Button) findViewById(R.id.email);
+        mapFragment.getMapAsync(this);
 
-        mRadioGroup = (RadioGroup) findViewById(R.id.radioGroup);
+        mSettings = findViewById(R.id.settings);
+        mEmail = findViewById(R.id.email);
+
+        mRadioGroup = findViewById(R.id.radioGroup);
         mRadioGroup.check(R.id.police);
 
-        mLogout = (Button) findViewById(R.id.logout);
+        mLogout = findViewById(R.id.logout);
         mLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -113,10 +117,10 @@ public class CitizenMapActivity extends FragmentActivity implements OnMapReadyCa
 
         mAuth = FirebaseAuth.getInstance();
 
-        mDescription = (EditText) findViewById(R.id.description);
+        mDescription = findViewById(R.id.description);
 
 
-        mRequest = (Button) findViewById(R.id.request);
+        mRequest = findViewById(R.id.request);
         mRequest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -150,7 +154,7 @@ public class CitizenMapActivity extends FragmentActivity implements OnMapReadyCa
 
                     int selectId = mRadioGroup.getCheckedRadioButtonId();
 
-                    final RadioButton radioButton = (RadioButton) findViewById(selectId);
+                    final RadioButton radioButton = findViewById(selectId);
 
                     if(radioButton.getText() == null) {
                         return;
@@ -202,7 +206,7 @@ public class CitizenMapActivity extends FragmentActivity implements OnMapReadyCa
         });*/
 
         //View
-        imgExpandable = (ImageView) findViewById(R.id.imgExpandable);
+        imgExpandable = findViewById(R.id.imgExpandable);
         mBottomSheet = BottomSheetFragmentCitizen.newInstance("Citizen bottom sheet");
         imgExpandable.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -241,7 +245,7 @@ public class CitizenMapActivity extends FragmentActivity implements OnMapReadyCa
         LayoutInflater inflater = LayoutInflater.from(CitizenMapActivity.this);
         View description_issue_layout = inflater.inflate(R.layout.layout_description_issue, null);
 
-        final EditText mDescription = (EditText) description_issue_layout.findViewById(R.id.description);
+        final EditText mDescription = description_issue_layout.findViewById(R.id.description);
         alertDialog.setView(description_issue_layout);
 
         alertDialog.setPositiveButton("ADAUGA", new DialogInterface.OnClickListener() {
@@ -286,7 +290,7 @@ public class CitizenMapActivity extends FragmentActivity implements OnMapReadyCa
                 if(requestMarker != null) {
                     requestMarker.remove();
                 }
-                mRequest.setText("Call Authorities");
+                mRequest.setText("Apeleaza Autoritatile");
                 dialog.dismiss();
             }
         });
@@ -303,6 +307,32 @@ public class CitizenMapActivity extends FragmentActivity implements OnMapReadyCa
         GeoFire geoFire = new GeoFire(lawenforcerLocation);
         geoQuery = geoFire.queryAtLocation(new GeoLocation(requestLocation.latitude, requestLocation.longitude), radius);
         geoQuery.removeAllListeners();
+
+        if(radius == 1000) {
+            requestBol = false;
+            String user_id = mAuth.getCurrentUser().getUid();
+            DatabaseReference issueRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Citizens").child(user_id).child("issue").child("description");
+            issueRef.removeValue();
+
+            if(lawenforcerFoundID != null) {
+                DatabaseReference lawenforcerRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Lawenforcers").child(lawenforcerFoundID).child("citizenRequest");
+                lawenforcerRef.removeValue();
+                lawenforcerFoundID = null;
+            }
+            lawenforcerFound = false;
+            radius=1;
+
+            String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("citizenRequest");
+            GeoFire geoFire2 = new GeoFire(ref);
+            geoFire2.removeLocation(userId);
+
+            if(requestMarker != null) {
+                requestMarker.remove();
+            }
+            mRequest.setText("Niciun echipaj gasit");
+        }
 
         geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
             @Override
@@ -377,7 +407,7 @@ public class CitizenMapActivity extends FragmentActivity implements OnMapReadyCa
                     List<Object> map = (List<Object>) dataSnapshot.getValue();
                     double locationLat = 0;
                     double locationLng = 0;
-                    mRequest.setText("Law enforcer found");
+                    mRequest.setText("Echipaj gasit");
                     if(map.get(0) != null) {
                         locationLat = Double.parseDouble(map.get(0).toString());
                     }
@@ -433,65 +463,75 @@ public class CitizenMapActivity extends FragmentActivity implements OnMapReadyCa
         mMap.getUiSettings().isCompassEnabled();
         mMap.getUiSettings().setMapToolbarEnabled(true);
 
-        LatLng bucharest = new LatLng(44.431802, 26.102680);
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(bucharest, 11));
+        /*LatLng bucharest = new LatLng(44.431802, 26.102680);
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(bucharest, 11));*/
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(CitizenMapActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_REQUEST_CODE);
-        }
-        buildGoogleApiClient();
-        mMap.setMyLocationEnabled(true);
-    }
-
-    protected synchronized  void buildGoogleApiClient() {
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
-        mGoogleApiClient.connect();
-    }
-
-    @Override
-    public void onLocationChanged(Location location) {
-        mLastLocation = location;
-
-        /*LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 13);
-        mMap.animateCamera(cameraUpdate);*/
-    }
-
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(1000);
         mLocationRequest.setFastestInterval(1000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)  {
+                mMap.setMyLocationEnabled(true);
+            } else {
+                checkLocationPermission();
+            }
         }
-        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+
+        mFusedLocationClient.getLastLocation()
+                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        if (location != null) {
+                            mLastLocation = location;
+                            LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 13);
+                            mMap.animateCamera(cameraUpdate);
+                        }
+                    }
+                });
     }
 
-    @Override
-    public void onConnectionSuspended(int i) {
+    LocationCallback mLocationCallback = new LocationCallback() {
+        @Override
+        public void onLocationResult(LocationResult locationResult) {
+            for (Location location : locationResult.getLocations()) {
+                    mLastLocation = location;
+            }
+        }
+    };
 
+    private void checkLocationPermission() {
+        if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)  {
+            if(ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
+                new android.app.AlertDialog.Builder(this)
+                        .setTitle("Give Permission")
+                        .setMessage("Please allow the permission")
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                ActivityCompat.requestPermissions(CitizenMapActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+                            }
+                        })
+                        .create()
+                        .show();
+            } else {
+                ActivityCompat.requestPermissions(CitizenMapActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+            }
+        }
     }
 
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
-    }
-
-    final int LOCATION_REQUEST_CODE = 1;
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
-            case LOCATION_REQUEST_CODE: {
+            case 1: {
                 if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                    mapFragment.getMapAsync(this);
+                    if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                        mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
+                        mMap.setMyLocationEnabled(true);
+                    }
                 } else {
                     Toast.makeText(getApplicationContext(), "Va rugam acceptati permisiunea", Toast.LENGTH_LONG).show();
                 }
