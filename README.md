@@ -107,10 +107,29 @@ IN POZA DE MAI SUS CETATEANUL POATE VEDEA DISTANTA LA CARE ECHIPAJUL SOLICITAT S
 IN POZA DE MAI SUS ECHIPAJUL POATE VEDEA LOCATIA EXACTA A INCIDENTULUI SI RUTA CARE ESTE ALCATUITA DIN: DISTANTA DE LA ECHIPAJ LA URGENTA SI TIMPUL ESTIMATIV PANA LA SOSIRE. DE ASEMENEA ECHIPAJUL PRIMESTE DESCRIEREA INCIDENTULUI, DAR SI DATE DESPRE CETATEANUL CE A INITIAT SOLICITAREA(NUMAR DE TELEFON, NUME, POZA DE PROFIL)
 ```
 
+## Tehnologii folosite:
+
+Aplicatia este construita pe baza frameworkului Android Studio cu ajutorul limbajului de programare Java, dar si JavaScript. Aplicatia este foarte fluida, responsive si fara defectiuni. Poate rula pe orice telefon cu Andoroid 5(Lollipop) sau mai mult.
+
+Pentru partea de backend am folosit Firebase si Google APIs.
+
+Librarii folosite(github): 
+
+-retrofit(http client)
+
+-glide(image container)
+
+-jd-alexander(directions calculator)
+
+-geofire(location coordinates)
+
+-rengwuxian( material edit text ),(design)
+
+
 ## Autori
-Dumitru Mihnea 
+**Dumitru Mihnea** 
 si
-Goiceanu Rares 
+**Goiceanu Rares**
 
 ## UN PREVIEW IN MARE AL APLICATIEI 
 
