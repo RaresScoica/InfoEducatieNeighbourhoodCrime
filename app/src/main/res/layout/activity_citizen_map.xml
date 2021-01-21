@@ -44,7 +44,7 @@
         android:background="@drawable/ic_chat_black"
         android:layout_marginStart="10dp"/>-->
 
-    <android.support.v7.widget.CardView
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
@@ -60,7 +60,7 @@
                 android:layout_alignParentEnd="true"
                 android:src="@drawable/ic_arrow_up_black_24dp"/>
         </RelativeLayout>
-    </android.support.v7.widget.CardView>
+    </androidx.cardview.widget.CardView>
 
     <LinearLayout
         android:layout_marginBottom="26dp"

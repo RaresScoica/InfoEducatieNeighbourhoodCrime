@@ -9,7 +9,8 @@ import android.content.ContextWrapper;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
-import android.support.annotation.RequiresApi;
+
+import androidx.annotation.RequiresApi;
 
 import ro.infoeducatie.neighbourhoodcrime.R;
 
